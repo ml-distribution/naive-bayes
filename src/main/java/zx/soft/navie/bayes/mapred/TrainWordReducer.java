@@ -17,7 +17,7 @@ public class TrainWordReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text key, Iterable<Text> values, Context context) throws InterruptedException, IOException {
 
 		// 更新词汇量计数器
-		context.getCounter(Controller.NB_COUNTERS.UNIQUE_WORDS).increment(1);
+		context.getCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_WORDS).increment(1);
 
 		// 统计各个类别及其出现次数
 		HashMap<String, Integer> counts = new HashMap<String, Integer>();

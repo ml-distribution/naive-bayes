@@ -19,13 +19,13 @@ public class TrainCateReducer extends Reducer<Text, IntWritable, Text, Text> {
 			IOException {
 
 		// 统计类别个数
-		context.getCounter(Controller.NB_COUNTERS.UNIQUE_LABELS).increment(1);
+		context.getCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_LABELS).increment(1);
 
 		long pY = 0;
 		long pYW = 0;
 		for (IntWritable value : values) {
 			// 统计全部的文档数，也就是样本数
-			context.getCounter(Controller.NB_COUNTERS.TOTAL_DOCS).increment(1);
+			context.getCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_DOCS).increment(1);
 			// 统计类别为key的文档数
 			pY++;
 			// 统计类别为key的所有文档下的词量总数

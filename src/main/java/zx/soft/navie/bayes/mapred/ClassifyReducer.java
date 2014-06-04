@@ -30,8 +30,8 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		totalDocuments = context.getConfiguration().getLong(Controller.TOTAL_DOCS, 100);
-		uniqueCates = context.getConfiguration().getLong(Controller.UNIQUE_LABELS, 100);
+		totalDocuments = context.getConfiguration().getLong(NavieBayesDistribute.TOTAL_DOCS, 100);
+		uniqueCates = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_LABELS, 100);
 		docsWithCate = new HashMap<String, Integer>();
 
 		// 在DistributedCache中建立HashMap存放类别数据
@@ -89,8 +89,8 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 		double bestProb = Double.NEGATIVE_INFINITY;
 		String bestLabel = null;
 		for (String label : probabilities.keySet()) {
-			double prior = Math.log(docsWithCate.get(label).intValue() + Controller.ALPHA)
-					- Math.log(totalDocuments + (Controller.ALPHA * uniqueCates));
+			double prior = Math.log(docsWithCate.get(label).intValue() + NavieBayesDistribute.ALPHA)
+					- Math.log(totalDocuments + (NavieBayesDistribute.ALPHA * uniqueCates));
 			double totalProb = probabilities.get(label).doubleValue() + prior;
 			if (totalProb > bestProb) {
 				bestLabel = label;

@@ -27,7 +27,7 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		wordsSize = context.getConfiguration().getLong(Controller.UNIQUE_WORDS, 100);
+		wordsSize = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_WORDS, 100);
 		wordsUnderCate = new HashMap<String, Integer>();
 
 		// 在DistributedCache下建立一个类别数据的HashMap
@@ -101,8 +101,8 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 
 				int multiplier = multipliers.get(docId);
 				double wordProb = multiplier
-						* (Math.log(count + Controller.ALPHA) - Math.log(wordLabelCount
-								+ (Controller.ALPHA * wordsSize)));
+						* (Math.log(count + NavieBayesDistribute.ALPHA) - Math.log(wordLabelCount
+								+ (NavieBayesDistribute.ALPHA * wordsSize)));
 				probs.append(String.format("%s:%s,", label, wordProb));
 			}
 			// 输出文档ID——><cate:wordProbability>列表::真实类别

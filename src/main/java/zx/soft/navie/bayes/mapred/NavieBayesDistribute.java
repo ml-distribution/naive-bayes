@@ -31,7 +31,7 @@ import org.apache.hadoop.util.ToolRunner;
  * @author wgybzb
  *
  */
-public class Controller extends Configured implements Tool {
+public class NavieBayesDistribute extends Configured implements Tool {
 
 	public static final double ALPHA = 1.0;
 
@@ -107,9 +107,9 @@ public class Controller extends Configured implements Tool {
 		Path joined = new Path(output.getParent(), "joined");
 
 		// Job 1a: 提取每个词语的信息
-		Controller.delete(conf, model);
+		NavieBayesDistribute.delete(conf, model);
 		Job trainWordJob = new Job(conf, "zxsoft-nb-wordtrain");
-		trainWordJob.setJarByClass(Controller.class);
+		trainWordJob.setJarByClass(NavieBayesDistribute.class);
 		trainWordJob.setNumReduceTasks(numReducers);
 		trainWordJob.setMapperClass(TrainWordMapper.class);
 		trainWordJob.setReducerClass(TrainWordReducer.class);
@@ -130,13 +130,13 @@ public class Controller extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(Controller.UNIQUE_WORDS,
-				trainWordJob.getCounters().findCounter(Controller.NB_COUNTERS.UNIQUE_WORDS).getValue());
+		classifyConf.setLong(NavieBayesDistribute.UNIQUE_WORDS,
+				trainWordJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_WORDS).getValue());
 
 		// Job 1b: 按照类别进行统计计算
-		Controller.delete(conf, distCache);
+		NavieBayesDistribute.delete(conf, distCache);
 		Job trainCateJob = new Job(conf, "zxsoft-nb-catetrain");
-		trainCateJob.setJarByClass(Controller.class);
+		trainCateJob.setJarByClass(NavieBayesDistribute.class);
 		trainCateJob.setNumReduceTasks(numReducers);
 		trainCateJob.setMapperClass(TrainCateMapper.class);
 		trainCateJob.setReducerClass(TrainCateReducer.class);
@@ -157,15 +157,15 @@ public class Controller extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(Controller.UNIQUE_LABELS,
-				trainCateJob.getCounters().findCounter(Controller.NB_COUNTERS.UNIQUE_LABELS).getValue());
-		classifyConf.setLong(Controller.TOTAL_DOCS,
-				trainCateJob.getCounters().findCounter(Controller.NB_COUNTERS.TOTAL_DOCS).getValue());
+		classifyConf.setLong(NavieBayesDistribute.UNIQUE_LABELS,
+				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_LABELS).getValue());
+		classifyConf.setLong(NavieBayesDistribute.TOTAL_DOCS,
+				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_DOCS).getValue());
 
 		// Job 2: 在Reduce端，将测试数据和模型联接起来
-		Controller.delete(conf, joined);
+		NavieBayesDistribute.delete(conf, joined);
 		Job joinJob = new Job(conf, "zxsoft-nb-testprep");
-		joinJob.setJarByClass(Controller.class);
+		joinJob.setJarByClass(NavieBayesDistribute.class);
 		joinJob.setNumReduceTasks(numReducers);
 		MultipleInputs.addInputPath(joinJob, model, KeyValueTextInputFormat.class, JoinModelMapper.class);
 		MultipleInputs.addInputPath(joinJob, testdata, TextInputFormat.class, JoinTestMapper.class);
@@ -186,7 +186,7 @@ public class Controller extends Configured implements Tool {
 		}
 
 		// Job 3: 分类阶段
-		Controller.delete(classifyConf, output);
+		NavieBayesDistribute.delete(classifyConf, output);
 
 		// 添加到分布式缓存
 		FileSystem fs = distCache.getFileSystem(classifyConf);
@@ -196,7 +196,7 @@ public class Controller extends Configured implements Tool {
 			DistributedCache.addCacheFile(status.getPath().toUri(), classifyConf);
 		}
 		Job classify = new Job(classifyConf, "zxsoft-nb-classify");
-		classify.setJarByClass(Controller.class);
+		classify.setJarByClass(NavieBayesDistribute.class);
 		classify.setNumReduceTasks(numReducers);
 
 		classify.setMapperClass(ClassifyMapper.class);
@@ -244,9 +244,13 @@ public class Controller extends Configured implements Tool {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
-		int exitCode = ToolRunner.run(new Controller(), args);
-		System.exit(exitCode);
+	public static void main(String[] args) {
+		try {
+			int exitCode = ToolRunner.run(new NavieBayesDistribute(), args);
+			System.exit(exitCode);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
