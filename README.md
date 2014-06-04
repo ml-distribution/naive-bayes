@@ -1,0 +1,1 @@
+Navie Bayes Algorithm.
