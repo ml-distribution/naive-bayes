@@ -6,12 +6,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * @author Shannon Quinn
+ * 处理模型，基本的IdentityMapper。
+ * @author wgybzb
  *
- * Processes the model. Basically the IdentityMapper (since it's apparently
- * nonexistent after Hadoop 0.18, grrr).
  */
-public class NBJoinModelMapper extends Mapper<Text, Text, Text, Text> {
+public class JoinModelMapper extends Mapper<Text, Text, Text, Text> {
 
 	@Override
 	public void map(Text key, Text value, Context context) throws InterruptedException, IOException {

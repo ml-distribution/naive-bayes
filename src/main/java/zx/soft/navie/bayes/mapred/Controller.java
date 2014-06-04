@@ -27,25 +27,27 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 /**
- * @author Shannon Quinn
+ * 配置Naive Bayes的训练和测试作业
+ * @author wgybzb
  *
- * Sets up the training and testing jobs for Naive Bayes.
  */
-public class NBController extends Configured implements Tool {
+public class Controller extends Configured implements Tool {
 
 	public static final double ALPHA = 1.0;
 
 	static enum NB_COUNTERS {
-		TOTAL_DOCS, VOCABULARY_SIZE, UNIQUE_LABELS
+		TOTAL_DOCS, UNIQUE_WORDS, UNIQUE_LABELS
 	}
 
+	// 文档数
 	public static final String TOTAL_DOCS = "edu.cmu.bigdata.shannon.total_docs";
-	public static final String VOCABULARY_SIZE = "edu.cmu.bigdata.shannon.vocabulary_size";
+	// 词数
+	public static final String UNIQUE_WORDS = "edu.cmu.bigdata.shannon.vocabulary_size";
+	// 类别数
 	public static final String UNIQUE_LABELS = "edu.cmu.bigdata.shannon.unique_labels";
 
 	/**
-	 * Taken directly from the homework assignment. Modified to operate
-	 * on the words and skip the line with the label text.
+	 * 将一个文档下的词汇数组转换成向量
 	 * @param words
 	 * @return
 	 */
@@ -61,7 +63,7 @@ public class NBController extends Configured implements Tool {
 	}
 
 	/**
-	 * Tokenizes the labels.
+	 * 将一个文档下的类别数组转换成向量
 	 * @param labels
 	 * @return
 	 */
@@ -75,9 +77,10 @@ public class NBController extends Configured implements Tool {
 	}
 
 	/**
-	 * Deletes the specified path from HDFS so we can run this multiple times.
+	 * 删除HDFS中的某个目录
 	 * @param conf
 	 * @param path
+	 * @throws IOException
 	 */
 	public static void delete(Configuration conf, Path path) throws IOException {
 		FileSystem fs = path.getFileSystem(conf);
@@ -86,8 +89,12 @@ public class NBController extends Configured implements Tool {
 		}
 	}
 
+	/**
+	 * 运行作业
+	 */
 	@Override
 	public int run(String[] args) throws Exception {
+
 		Configuration conf = getConf();
 		Configuration classifyConf = new Configuration();
 
@@ -99,13 +106,13 @@ public class NBController extends Configured implements Tool {
 		Path model = new Path(output.getParent(), "model");
 		Path joined = new Path(output.getParent(), "joined");
 
-		// Job 1a: Extract information on each word.
-		NBController.delete(conf, model);
-		Job trainWordJob = new Job(conf, "shannon-nb-wordtrain");
-		trainWordJob.setJarByClass(NBController.class);
+		// Job 1a: 提取每个词语的信息
+		Controller.delete(conf, model);
+		Job trainWordJob = new Job(conf, "zxsoft-nb-wordtrain");
+		trainWordJob.setJarByClass(Controller.class);
 		trainWordJob.setNumReduceTasks(numReducers);
-		trainWordJob.setMapperClass(NBTrainWordMapper.class);
-		trainWordJob.setReducerClass(NBTrainWordReducer.class);
+		trainWordJob.setMapperClass(TrainWordMapper.class);
+		trainWordJob.setReducerClass(TrainWordReducer.class);
 
 		trainWordJob.setInputFormatClass(TextInputFormat.class);
 		trainWordJob.setOutputFormatClass(TextOutputFormat.class);
@@ -123,46 +130,46 @@ public class NBController extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(NBController.VOCABULARY_SIZE,
-				trainWordJob.getCounters().findCounter(NBController.NB_COUNTERS.VOCABULARY_SIZE).getValue());
+		classifyConf.setLong(Controller.UNIQUE_WORDS,
+				trainWordJob.getCounters().findCounter(Controller.NB_COUNTERS.UNIQUE_WORDS).getValue());
 
-		// Job 1b: Tabulate label-based statistics.
-		NBController.delete(conf, distCache);
-		Job trainLabelJob = new Job(conf, "shannon-nb-labeltrain");
-		trainLabelJob.setJarByClass(NBController.class);
-		trainLabelJob.setNumReduceTasks(numReducers);
-		trainLabelJob.setMapperClass(NBTrainLabelMapper.class);
-		trainLabelJob.setReducerClass(NBTrainLabelReducer.class);
+		// Job 1b: 按照类别进行统计计算
+		Controller.delete(conf, distCache);
+		Job trainCateJob = new Job(conf, "zxsoft-nb-catetrain");
+		trainCateJob.setJarByClass(Controller.class);
+		trainCateJob.setNumReduceTasks(numReducers);
+		trainCateJob.setMapperClass(TrainCateMapper.class);
+		trainCateJob.setReducerClass(TrainCateReducer.class);
 
-		trainLabelJob.setInputFormatClass(TextInputFormat.class);
-		trainLabelJob.setOutputFormatClass(TextOutputFormat.class);
+		trainCateJob.setInputFormatClass(TextInputFormat.class);
+		trainCateJob.setOutputFormatClass(TextOutputFormat.class);
 
-		trainLabelJob.setMapOutputKeyClass(Text.class);
-		trainLabelJob.setMapOutputValueClass(IntWritable.class);
-		trainLabelJob.setOutputKeyClass(Text.class);
-		trainLabelJob.setOutputValueClass(Text.class);
+		trainCateJob.setMapOutputKeyClass(Text.class);
+		trainCateJob.setMapOutputValueClass(IntWritable.class);
+		trainCateJob.setOutputKeyClass(Text.class);
+		trainCateJob.setOutputValueClass(Text.class);
 
-		FileInputFormat.addInputPath(trainLabelJob, traindata);
-		FileOutputFormat.setOutputPath(trainLabelJob, distCache);
+		FileInputFormat.addInputPath(trainCateJob, traindata);
+		FileOutputFormat.setOutputPath(trainCateJob, distCache);
 
-		if (!trainLabelJob.waitForCompletion(true)) {
-			System.err.println("ERROR: Label training failed!");
+		if (!trainCateJob.waitForCompletion(true)) {
+			System.err.println("ERROR: Cate training failed!");
 			return 1;
 		}
 
-		classifyConf.setLong(NBController.UNIQUE_LABELS,
-				trainLabelJob.getCounters().findCounter(NBController.NB_COUNTERS.UNIQUE_LABELS).getValue());
-		classifyConf.setLong(NBController.TOTAL_DOCS,
-				trainLabelJob.getCounters().findCounter(NBController.NB_COUNTERS.TOTAL_DOCS).getValue());
+		classifyConf.setLong(Controller.UNIQUE_LABELS,
+				trainCateJob.getCounters().findCounter(Controller.NB_COUNTERS.UNIQUE_LABELS).getValue());
+		classifyConf.setLong(Controller.TOTAL_DOCS,
+				trainCateJob.getCounters().findCounter(Controller.NB_COUNTERS.TOTAL_DOCS).getValue());
 
-		// Job 2: Reduce-side join the test dataset with the model.
-		NBController.delete(conf, joined);
-		Job joinJob = new Job(conf, "shannon-nb-testprep");
-		joinJob.setJarByClass(NBController.class);
+		// Job 2: 在Reduce端，将测试数据和模型联接起来
+		Controller.delete(conf, joined);
+		Job joinJob = new Job(conf, "zxsoft-nb-testprep");
+		joinJob.setJarByClass(Controller.class);
 		joinJob.setNumReduceTasks(numReducers);
-		MultipleInputs.addInputPath(joinJob, model, KeyValueTextInputFormat.class, NBJoinModelMapper.class);
-		MultipleInputs.addInputPath(joinJob, testdata, TextInputFormat.class, NBJoinTestMapper.class);
-		joinJob.setReducerClass(NBJoinReducer.class);
+		MultipleInputs.addInputPath(joinJob, model, KeyValueTextInputFormat.class, JoinModelMapper.class);
+		MultipleInputs.addInputPath(joinJob, testdata, TextInputFormat.class, JoinTestMapper.class);
+		joinJob.setReducerClass(JoinReducer.class);
 
 		joinJob.setOutputFormatClass(TextOutputFormat.class);
 
@@ -178,22 +185,22 @@ public class NBController extends Configured implements Tool {
 			return 1;
 		}
 
-		// Job 3: Classification!
-		NBController.delete(classifyConf, output);
+		// Job 3: 分类阶段
+		Controller.delete(classifyConf, output);
 
-		// Add to the Distributed Cache.
+		// 添加到分布式缓存
 		FileSystem fs = distCache.getFileSystem(classifyConf);
 		Path pathPattern = new Path(distCache, "part-r-[0-9]*");
 		FileStatus[] list = fs.globStatus(pathPattern);
 		for (FileStatus status : list) {
 			DistributedCache.addCacheFile(status.getPath().toUri(), classifyConf);
 		}
-		Job classify = new Job(classifyConf, "shannon-nb-classify");
-		classify.setJarByClass(NBController.class);
+		Job classify = new Job(classifyConf, "zxsoft-nb-classify");
+		classify.setJarByClass(Controller.class);
 		classify.setNumReduceTasks(numReducers);
 
-		classify.setMapperClass(NBClassifyMapper.class);
-		classify.setReducerClass(NBClassifyReducer.class);
+		classify.setMapperClass(ClassifyMapper.class);
+		classify.setReducerClass(ClassifyReducer.class);
 
 		classify.setInputFormatClass(KeyValueTextInputFormat.class);
 		classify.setOutputFormatClass(TextOutputFormat.class);
@@ -211,8 +218,7 @@ public class NBController extends Configured implements Tool {
 			return 1;
 		}
 
-		// Last job: manually read through the output file and 
-		// sort the list of classification probabilities.
+		// Last job: 读取输出文件，并对分类概率列表排序
 
 		int correct = 0;
 		int total = 0;
@@ -239,7 +245,7 @@ public class NBController extends Configured implements Tool {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		int exitCode = ToolRunner.run(new NBController(), args);
+		int exitCode = ToolRunner.run(new Controller(), args);
 		System.exit(exitCode);
 	}
 

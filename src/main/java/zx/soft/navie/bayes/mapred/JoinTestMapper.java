@@ -8,25 +8,26 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * @author Shannon Quinn
+ * 准备测试数据，用于分类，输出格式：word——>文档ID,类别列表
+ * @author wgybzb
  *
- * Prepares the test data to be joined with the model for classification.
  */
-public class NBJoinTestMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class JoinTestMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
+
 		String[] words = value.toString().split("\\s+");
-		Vector<String> labels = NBController.tokenizeLabels(words[0]);
-		Vector<String> text = NBController.tokenizeDoc(words);
+		Vector<String> cates = Controller.tokenizeLabels(words[0]);
+		Vector<String> text = Controller.tokenizeDoc(words);
 
 		StringBuilder labelString = new StringBuilder();
-		for (String label : labels) {
-			labelString.append(String.format("%s,", label));
+		for (String cate : cates) {
+			labelString.append(String.format("%s,", cate));
 		}
 		String output = labelString.toString();
 
-		// Output each word and its list of labels.
+		// word——>文档ID,类别列表
 		for (String word : text) {
 			context.write(new Text(word),
 					new Text(String.format("%s,%s", key.get(), output.substring(0, output.length() - 1))));

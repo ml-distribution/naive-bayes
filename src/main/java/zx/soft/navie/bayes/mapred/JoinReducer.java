@@ -11,27 +11,25 @@ import org.apache.hadoop.mapreduce.Reducer;
  * 
  * Performs the reduce-side join on the model and test data.
  */
-public class NBJoinReducer extends Reducer<Text, Text, Text, Text> {
+public class JoinReducer extends Reducer<Text, Text, Text, Text> {
 
 	@Override
 	public void reduce(Text key, Iterable<Text> values, Context context) throws InterruptedException, IOException {
+
 		String modelLine = null;
 		ArrayList<String> documents = new ArrayList<String>();
 		for (Text value : values) {
 			String line = value.toString();
 			if (line.contains(":")) {
-				// Line is from the model.
+				// 构建好的模型数据
 				modelLine = line;
 			} else {
-				// Contains the document ID with list of labels.
+				// 包含"文档ID,类别列表"的测试数据
 				documents.add(line);
 			}
 		}
 
 		if (documents.size() > 0) {
-			// The only words in the training set we care about are those
-			// which appear in the testing set as well. If they don't appear
-			// in the testing set...sorry brah.
 			if (modelLine == null) {
 				modelLine = "";
 			}

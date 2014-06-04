@@ -8,22 +8,23 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * @author Shannon Quinn
+ * 读取输入文件数据，输出为word——>cate格式。
+ * @author wgybzb
  *
- * Reads and parses the input files to build a reverse index of words to labels.
  */
-public class NBTrainWordMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class TrainWordMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
-		String[] words = value.toString().split("\\s+");
-		Vector<String> labels = NBController.tokenizeLabels(words[0]);
-		Vector<String> text = NBController.tokenizeDoc(words);
 
-		for (String label : labels) {
+		String[] words = value.toString().split("\\s+");
+		Vector<String> cates = Controller.tokenizeLabels(words[0]);
+		Vector<String> text = Controller.tokenizeDoc(words);
+
+		for (String cate : cates) {
 			for (String word : text) {
-				// (Y = y, W = w)
-				context.write(new Text(word), new Text(label));
+				// (C = c, W = w)
+				context.write(new Text(word), new Text(cate));
 			}
 		}
 	}

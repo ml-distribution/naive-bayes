@@ -9,20 +9,21 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * @author Shannon Quinn
+ * 统计每个类别对应的词数，即：cate——>size(words)
+ * @author wgybzb
  *
- * Handles parsing the input documents and sorting out label statistics.
  */
-public class NBTrainLabelMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class TrainCateMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
-		String[] words = value.toString().split("\\s+");
-		Vector<String> labels = NBController.tokenizeLabels(words[0]);
-		Vector<String> text = NBController.tokenizeDoc(words);
 
-		for (String label : labels) {
-			context.write(new Text(label), new IntWritable(text.size()));
+		String[] words = value.toString().split("\\s+");
+		Vector<String> cates = Controller.tokenizeLabels(words[0]);
+		Vector<String> text = Controller.tokenizeDoc(words);
+
+		for (String cate : cates) {
+			context.write(new Text(cate), new IntWritable(text.size()));
 		}
 	}
 

@@ -18,29 +18,29 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * @author Shannon Quinn
+ * 计算每个文档的累加的log(prob(word|cate))概率和
+ * @author wgybzb
  *
- * Sums the log probabilities for the document.
  */
-public class NBClassifyReducer extends Reducer<LongWritable, Text, LongWritable, IntWritable> {
+public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, IntWritable> {
 
 	private long totalDocuments;
-	private long uniqueLabels;
-	private HashMap<String, Integer> docsWithLabel;
+	private long uniqueCates;
+	private HashMap<String, Integer> docsWithCate;
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		totalDocuments = context.getConfiguration().getLong(NBController.TOTAL_DOCS, 100);
-		uniqueLabels = context.getConfiguration().getLong(NBController.UNIQUE_LABELS, 100);
-		docsWithLabel = new HashMap<String, Integer>();
+		totalDocuments = context.getConfiguration().getLong(Controller.TOTAL_DOCS, 100);
+		uniqueCates = context.getConfiguration().getLong(Controller.UNIQUE_LABELS, 100);
+		docsWithCate = new HashMap<String, Integer>();
 
-		// Build a HashMap of the label data in the DistributedCache.
+		// 在DistributedCache中建立HashMap存放类别数据
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
 		if (files == null || files.length < 1) {
 			throw new IOException("DistributedCache returned an empty file set!");
 		}
 
-		// Read in from the DistributedCache.
+		// 从DistributedCache中读取数据
 		LocalFileSystem lfs = FileSystem.getLocal(context.getConfiguration());
 		for (Path file : files) {
 			FSDataInputStream input = lfs.open(file);
@@ -50,7 +50,7 @@ public class NBClassifyReducer extends Reducer<LongWritable, Text, LongWritable,
 				String[] elems = line.split("\\s+");
 				String label = elems[0];
 				String[] counts = elems[1].split(":");
-				docsWithLabel.put(label, new Integer(Integer.parseInt(counts[0])));
+				docsWithCate.put(label, new Integer(Integer.parseInt(counts[0])));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -59,24 +59,23 @@ public class NBClassifyReducer extends Reducer<LongWritable, Text, LongWritable,
 	@Override
 	public void reduce(LongWritable key, Iterable<Text> values, Context context) throws InterruptedException,
 			IOException {
-		// Lots of metadata.
+
 		HashMap<String, Double> probabilities = new HashMap<String, Double>();
 		ArrayList<String> trueLabels = null;
 
 		for (Text value : values) {
-			// Each value is a list of label probabilities for a single word.
+			// 每次循环的value是一个“词语对应类别概率列表”格式
 			String[] elements = value.toString().split("::");
 			String[] labelProbs = elements[0].split(",");
 			for (String labelProb : labelProbs) {
 				String[] pieces = labelProb.split(":");
 				String label = pieces[0];
 				double prob = Double.parseDouble(pieces[1]);
-
 				probabilities.put(label, new Double(probabilities.containsKey(label) ? probabilities.get(label)
 						.doubleValue() + prob : prob));
 			}
 
-			// Also need the true labels.
+			// 同时也需要真实类别
 			if (trueLabels == null) {
 				String[] list = elements[1].split(":");
 				trueLabels = new ArrayList<String>();
@@ -86,13 +85,12 @@ public class NBClassifyReducer extends Reducer<LongWritable, Text, LongWritable,
 			}
 		}
 
-		// Now, loop through each label, adding in the prior for it and 
-		// determining what label is most likely.
+		// 循环每个类别, 增加先验概率，并计算最相近的类别 
 		double bestProb = Double.NEGATIVE_INFINITY;
 		String bestLabel = null;
 		for (String label : probabilities.keySet()) {
-			double prior = Math.log((double) docsWithLabel.get(label).intValue() + NBController.ALPHA)
-					- Math.log(totalDocuments + (NBController.ALPHA * uniqueLabels));
+			double prior = Math.log(docsWithCate.get(label).intValue() + Controller.ALPHA)
+					- Math.log(totalDocuments + (Controller.ALPHA * uniqueCates));
 			double totalProb = probabilities.get(label).doubleValue() + prior;
 			if (totalProb > bestProb) {
 				bestLabel = label;
@@ -100,7 +98,6 @@ public class NBClassifyReducer extends Reducer<LongWritable, Text, LongWritable,
 			}
 		}
 
-		// All done! Did we get it right???
 		context.write(key, new IntWritable(trueLabels.contains(bestLabel) ? 1 : 0));
 	}
 

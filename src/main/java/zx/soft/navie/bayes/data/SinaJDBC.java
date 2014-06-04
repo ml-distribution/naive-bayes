@@ -1,6 +1,5 @@
 package zx.soft.navie.bayes.data;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -56,13 +55,13 @@ public class SinaJDBC {
 	/**
 	 * 获取链接
 	 */
-	private Connection getConnection() {
-		try {
-			return dataSource.getConnection();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	//	private Connection getConnection() {
+	//		try {
+	//			return dataSource.getConnection();
+	//		} catch (SQLException e) {
+	//			throw new RuntimeException(e);
+	//		}
+	//	}
 
 	/**
 	 * 关闭数据库
