@@ -40,11 +40,11 @@ public class NavieBayesDistribute extends Configured implements Tool {
 	}
 
 	// 文档数
-	public static final String TOTAL_DOCS = "edu.cmu.bigdata.shannon.total_docs";
+	public static final String TOTAL_DOCS = "navie.bayes.total_docs";
 	// 词数
-	public static final String UNIQUE_WORDS = "edu.cmu.bigdata.shannon.vocabulary_size";
+	public static final String UNIQUE_WORDS = "navie.bayes.unique_words";
 	// 类别数
-	public static final String UNIQUE_LABELS = "edu.cmu.bigdata.shannon.unique_labels";
+	public static final String UNIQUE_LABELS = "navie.bayes.unique_labels";
 
 	/**
 	 * 将一个文档下的词汇数组转换成向量
@@ -108,7 +108,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 
 		// Job 1a: 提取每个词语的信息
 		NavieBayesDistribute.delete(conf, model);
-		Job trainWordJob = new Job(conf, "zxsoft-nb-wordtrain");
+		Job trainWordJob = new Job(conf, "navie-bayes-wordtrain");
 		trainWordJob.setJarByClass(NavieBayesDistribute.class);
 		trainWordJob.setNumReduceTasks(numReducers);
 		trainWordJob.setMapperClass(TrainWordMapper.class);
@@ -135,7 +135,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 
 		// Job 1b: 按照类别进行统计计算
 		NavieBayesDistribute.delete(conf, distCache);
-		Job trainCateJob = new Job(conf, "zxsoft-nb-catetrain");
+		Job trainCateJob = new Job(conf, "navie-bayes-catetrain");
 		trainCateJob.setJarByClass(NavieBayesDistribute.class);
 		trainCateJob.setNumReduceTasks(numReducers);
 		trainCateJob.setMapperClass(TrainCateMapper.class);
@@ -164,7 +164,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 
 		// Job 2: 在Reduce端，将测试数据和模型联接起来
 		NavieBayesDistribute.delete(conf, joined);
-		Job joinJob = new Job(conf, "zxsoft-nb-testprep");
+		Job joinJob = new Job(conf, "navie-bayes-testprep");
 		joinJob.setJarByClass(NavieBayesDistribute.class);
 		joinJob.setNumReduceTasks(numReducers);
 		MultipleInputs.addInputPath(joinJob, model, KeyValueTextInputFormat.class, JoinModelMapper.class);
@@ -195,7 +195,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		for (FileStatus status : list) {
 			DistributedCache.addCacheFile(status.getPath().toUri(), classifyConf);
 		}
-		Job classify = new Job(classifyConf, "zxsoft-nb-classify");
+		Job classify = new Job(classifyConf, "navie-bayes-classify");
 		classify.setJarByClass(NavieBayesDistribute.class);
 		classify.setNumReduceTasks(numReducers);
 
