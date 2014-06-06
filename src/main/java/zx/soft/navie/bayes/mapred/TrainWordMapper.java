@@ -18,8 +18,8 @@ public class TrainWordMapper extends Mapper<LongWritable, Text, Text, Text> {
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
 
 		String[] words = value.toString().split("\\s+");
-		Vector<String> cates = NavieBayesDistribute.tokenizeLabels(words[0]);
-		Vector<String> text = NavieBayesDistribute.tokenizeDoc(words);
+		Vector<String> cates = TrainsVector.tokenizeCates(words[0]);
+		Vector<String> text = TrainsVector.tokenizeDoc(words);
 
 		for (String cate : cates) {
 			for (String word : text) {

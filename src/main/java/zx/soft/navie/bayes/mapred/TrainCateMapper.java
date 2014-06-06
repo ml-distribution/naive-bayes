@@ -19,8 +19,8 @@ public class TrainCateMapper extends Mapper<LongWritable, Text, Text, IntWritabl
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
 
 		String[] words = value.toString().split("\\s+");
-		Vector<String> cates = NavieBayesDistribute.tokenizeLabels(words[0]);
-		Vector<String> text = NavieBayesDistribute.tokenizeDoc(words);
+		Vector<String> cates = TrainsVector.tokenizeCates(words[0]);
+		Vector<String> text = TrainsVector.tokenizeDoc(words);
 
 		for (String cate : cates) {
 			context.write(new Text(cate), new IntWritable(text.size()));

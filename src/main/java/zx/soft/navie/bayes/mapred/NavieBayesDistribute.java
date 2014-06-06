@@ -3,7 +3,6 @@ package zx.soft.navie.bayes.mapred;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Vector;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -45,36 +44,6 @@ public class NavieBayesDistribute extends Configured implements Tool {
 	public static final String UNIQUE_WORDS = "navie.bayes.unique_words";
 	// 类别数
 	public static final String UNIQUE_LABELS = "navie.bayes.unique_labels";
-
-	/**
-	 * 将一个文档下的词汇数组转换成向量
-	 * @param words
-	 * @return
-	 */
-	public static Vector<String> tokenizeDoc(String[] words) {
-		Vector<String> tokens = new Vector<String>();
-		for (int i = 1; i < words.length; i++) {
-			words[i] = words[i].replaceAll("\\W", "");
-			if (words[i].length() > 0) {
-				tokens.add(words[i]);
-			}
-		}
-		return tokens;
-	}
-
-	/**
-	 * 将一个文档下的类别数组转换成向量
-	 * @param labels
-	 * @return
-	 */
-	public static Vector<String> tokenizeLabels(String labels) {
-		String[] tokens = labels.split(",");
-		Vector<String> retval = new Vector<String>();
-		for (String token : tokens) {
-			retval.add(token);
-		}
-		return retval;
-	}
 
 	/**
 	 * 删除HDFS中的某个目录
@@ -168,8 +137,8 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		joinJob.setJarByClass(NavieBayesDistribute.class);
 		joinJob.setNumReduceTasks(numReducers);
 		MultipleInputs.addInputPath(joinJob, model, KeyValueTextInputFormat.class, JoinModelMapper.class);
-		MultipleInputs.addInputPath(joinJob, testdata, TextInputFormat.class, JoinTestMapper.class);
-		joinJob.setReducerClass(JoinReducer.class);
+		MultipleInputs.addInputPath(joinJob, testdata, TextInputFormat.class, JoinForecastMapper.class);
+		joinJob.setReducerClass(JoinForecastReducer.class);
 
 		joinJob.setOutputFormatClass(TextOutputFormat.class);
 

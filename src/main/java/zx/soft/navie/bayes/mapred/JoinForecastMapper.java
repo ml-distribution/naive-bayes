@@ -12,14 +12,14 @@ import org.apache.hadoop.mapreduce.Mapper;
  * @author wgybzb
  *
  */
-public class JoinTestMapper extends Mapper<LongWritable, Text, Text, Text> {
+public class JoinForecastMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	@Override
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
 
 		String[] words = value.toString().split("\\s+");
-		Vector<String> cates = NavieBayesDistribute.tokenizeLabels(words[0]);
-		Vector<String> text = NavieBayesDistribute.tokenizeDoc(words);
+		Vector<String> cates = TrainsVector.tokenizeCates(words[0]);
+		Vector<String> text = TrainsVector.tokenizeDoc(words);
 
 		StringBuilder labelString = new StringBuilder();
 		for (String cate : cates) {

@@ -7,11 +7,12 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * @author Shannon Quinn
+ * 在Reduce阶段，将训练模型和预测数据结合.
  * 
- * Performs the reduce-side join on the model and test data.
+ * @author wanggang
+ *
  */
-public class JoinReducer extends Reducer<Text, Text, Text, Text> {
+public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 
 	@Override
 	public void reduce(Text key, Iterable<Text> values, Context context) throws InterruptedException, IOException {

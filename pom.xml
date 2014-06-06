@@ -61,6 +61,16 @@
 			<artifactId>hadoop-core</artifactId>
 			<version>1.2.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.mrunit</groupId>
+			<artifactId>mrunit</artifactId>
+			<version>0.8.0-incubating</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -141,24 +151,15 @@
 
 	<!-- 依赖包仓库 -->
 	<repositories><!-- 中新仓库 -->
-	    <!--  
-		<repository>
-			<id>zxsoft-public</id>
-			<name>Nexus Release Repository</name>
-			<url>http://192.168.3.23:18081/nexus/content/groups/public/</url>
-		</repository>
-		-->
+		<!-- <repository> <id>zxsoft-public</id> <name>Nexus Release Repository</name> 
+			<url>http://192.168.3.23:18081/nexus/content/groups/public/</url> </repository> -->
 	</repositories>
 
 	<!-- 部署仓库 -->
 	<distributionManagement>
-	    <!--  
-		<repository>
-			<id>zxsoft-releases</id>
-			<name>Nexus Release Repository</name>
-			<url>http://192.168.3.23:18081/nexus/content/repositories/releases/</url>
-		</repository>
-		-->
+		<!-- <repository> <id>zxsoft-releases</id> <name>Nexus Release Repository</name> 
+			<url>http://192.168.3.23:18081/nexus/content/repositories/releases/</url> 
+			</repository> -->
 	</distributionManagement>
 
 </project>
