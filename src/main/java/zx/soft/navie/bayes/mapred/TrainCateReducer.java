@@ -10,6 +10,7 @@ import org.apache.hadoop.mapreduce.Reducer;
  *  统计每个类别下面的文档数和词汇量，输出格式：
  *   cate——> cate下的文档数:cate下的词汇量
  *  此后，可以将输出序列化到DistributedCache中，以便分类器获取数据。
+ *  
  * @author wgybzb
  */
 public class TrainCateReducer extends Reducer<Text, IntWritable, Text, Text> {
