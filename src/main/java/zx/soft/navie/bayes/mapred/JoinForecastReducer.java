@@ -7,7 +7,11 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * 在Reduce阶段，将训练模型和预测数据结合.
+ * 在Reduce阶段，将训练模型和预测数据结合。
+ * 1）构建好的训练模型数据
+ *    word——>cate1:3::docID1,cat21,cate2::docID2,cate3,cate4
+ * 2）包含"文档ID,类别列表"的预测数据
+ *    word——>::docID1,cate1,cate2::docID2,cate3,cate4
  * 
  * @author wanggang
  *
@@ -22,10 +26,10 @@ public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 		for (Text value : values) {
 			String line = value.toString();
 			if (line.contains(":")) {
-				// 构建好的模型数据
+				// 构建好的训练模型数据
 				modelLine = line;
 			} else {
-				// 包含"文档ID,类别列表"的测试数据
+				// 包含"文档ID,类别列表"的预测数据
 				documents.add(line);
 			}
 		}

@@ -21,11 +21,11 @@ public class JoinForecastMapper extends Mapper<LongWritable, Text, Text, Text> {
 		Vector<String> cates = TrainsVector.tokenizeCates(words[0]);
 		Vector<String> text = TrainsVector.tokenizeDoc(words);
 
-		StringBuilder labelString = new StringBuilder();
+		StringBuilder cateStr = new StringBuilder();
 		for (String cate : cates) {
-			labelString.append(String.format("%s,", cate));
+			cateStr.append(String.format("%s,", cate));
 		}
-		String output = labelString.toString();
+		String output = cateStr.toString();
 
 		// word——>文档ID,类别列表
 		for (String word : text) {
