@@ -9,7 +9,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * 统计每个类别对应的词数，即：cate——>size(words)
+ * 统计每个类别对应的词数，统计的单词数有重复，即：cate——>size(words)
  * 
  * @author wgybzb
  *
