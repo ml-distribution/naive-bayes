@@ -25,13 +25,13 @@ import org.apache.hadoop.mapreduce.Reducer;
  */
 public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, IntWritable> {
 
-	private long totalDocuments;
+	private long totalSamples;
 	private long uniqueCates;
 	private HashMap<String, Integer> docsWithCate;
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		totalDocuments = context.getConfiguration().getLong(NavieBayesDistribute.TOTAL_SAMPLES, 100);
+		totalSamples = context.getConfiguration().getLong(NavieBayesDistribute.TOTAL_SAMPLES, 100);
 		uniqueCates = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_LABELS, 100);
 		docsWithCate = new HashMap<String, Integer>();
 
@@ -91,7 +91,7 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 		String bestLabel = null;
 		for (String label : probabilities.keySet()) {
 			double prior = Math.log(docsWithCate.get(label).intValue() + NavieBayesDistribute.ALPHA)
-					- Math.log(totalDocuments + (NavieBayesDistribute.ALPHA * uniqueCates));
+					- Math.log(totalSamples + (NavieBayesDistribute.ALPHA * uniqueCates));
 			double totalProb = probabilities.get(label).doubleValue() + prior;
 			if (totalProb > bestProb) {
 				bestLabel = label;
