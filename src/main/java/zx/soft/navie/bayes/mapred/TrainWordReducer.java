@@ -7,7 +7,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 /**
- * 统计每个词对应类别及其次数，输出格式word——>catei:n1 catej:n2 catek:n3 ...
+ * 统计每个词对应类别及其出现次数，输出格式word——>catei:n1 catej:n2 catek:n3 ...
+ * 
  * @author wgybzb
  *
  */

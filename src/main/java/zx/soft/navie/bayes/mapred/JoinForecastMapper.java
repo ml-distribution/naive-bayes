@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 /**
  * 准备测试数据，用于分类，输出格式：word——>文档ID,类别列表
+ * 
  * @author wgybzb
  *
  */

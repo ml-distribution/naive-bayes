@@ -17,6 +17,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 /**
  * 计算每个类别下的每个词的概率
+ * 
  * @author wgybzb
  *
  */

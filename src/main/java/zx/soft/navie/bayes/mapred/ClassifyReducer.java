@@ -19,6 +19,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  * 计算每个文档的累加的log(prob(word|cate))概率和
+ * 
  * @author wgybzb
  *
  */
@@ -30,7 +31,7 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		totalDocuments = context.getConfiguration().getLong(NavieBayesDistribute.TOTAL_DOCS, 100);
+		totalDocuments = context.getConfiguration().getLong(NavieBayesDistribute.TOTAL_SAMPLES, 100);
 		uniqueCates = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_LABELS, 100);
 		docsWithCate = new HashMap<String, Integer>();
 

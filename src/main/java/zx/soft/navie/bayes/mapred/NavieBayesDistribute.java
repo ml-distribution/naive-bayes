@@ -27,6 +27,7 @@ import org.apache.hadoop.util.ToolRunner;
 
 /**
  * 配置Naive Bayes的训练和测试作业
+ * 
  * @author wgybzb
  *
  */
@@ -35,11 +36,11 @@ public class NavieBayesDistribute extends Configured implements Tool {
 	public static final double ALPHA = 1.0;
 
 	static enum NB_COUNTERS {
-		TOTAL_DOCS, UNIQUE_WORDS, UNIQUE_LABELS
+		TOTAL_SAMPLES, UNIQUE_WORDS, UNIQUE_LABELS
 	}
 
-	// 文档数
-	public static final String TOTAL_DOCS = "navie.bayes.total_docs";
+	// 样本数，如果每个文档是单个类别的话，文档数和样本数一样，否则样本数大于文档数，实际则以样本数为准
+	public static final String TOTAL_SAMPLES = "navie.bayes.total_samples";
 	// 词数
 	public static final String UNIQUE_WORDS = "navie.bayes.unique_words";
 	// 类别数
@@ -128,8 +129,8 @@ public class NavieBayesDistribute extends Configured implements Tool {
 
 		classifyConf.setLong(NavieBayesDistribute.UNIQUE_LABELS,
 				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_LABELS).getValue());
-		classifyConf.setLong(NavieBayesDistribute.TOTAL_DOCS,
-				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_DOCS).getValue());
+		classifyConf.setLong(NavieBayesDistribute.TOTAL_SAMPLES,
+				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_SAMPLES).getValue());
 
 		// Job 2: 在Reduce端，将测试数据和模型联接起来
 		NavieBayesDistribute.delete(conf, joined);

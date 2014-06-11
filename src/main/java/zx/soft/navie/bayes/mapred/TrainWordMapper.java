@@ -8,7 +8,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 /**
- * 读取输入文件数据，输出为word——>cate格式。
+ * 读取输入文件数据，输出格式为：word——>cate
+ * 
  * @author wgybzb
  *
  */
