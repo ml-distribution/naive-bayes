@@ -24,9 +24,10 @@ public class TextAnalyzerMapReduce extends Configured implements Tool {
 		public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
 
 			String[] strs = value.toString().split("\\s+");
-			String spiltWords = analyzerTool.analyzerTextToStr(strs[1], "	");
-
-			context.write(key, new Text(strs[0] + "	" + spiltWords));
+			if (strs[1].length() > 0) {
+				String spiltWords = analyzerTool.analyzerTextToStr(strs[1], "	");
+				context.write(key, new Text(strs[0] + "	" + spiltWords));
+			}
 		}
 
 	}
