@@ -17,7 +17,7 @@ public class ClassifyReducerTest {
 
 	@Before
 	public void setUp() {
-		ClassifyReducer reducer = new ClassifyReducer();
+		ClassifyTestReducer reducer = new ClassifyTestReducer();
 		reduceDriver = ReduceDriver.newReduceDriver(reducer);
 	}
 

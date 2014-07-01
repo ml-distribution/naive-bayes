@@ -3,7 +3,6 @@ package zx.soft.navie.bayes.mapred;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.filecache.DistributedCache;
@@ -12,7 +11,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -23,7 +21,7 @@ import org.apache.hadoop.mapreduce.Reducer;
  * @author wgybzb
  *
  */
-public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, IntWritable> {
+public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWritable, Text> {
 
 	private long totalSamples;
 	private long uniqueCates;
@@ -62,7 +60,6 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 			IOException {
 
 		HashMap<String, Double> probabilities = new HashMap<String, Double>();
-		ArrayList<String> trueLabels = null;
 
 		for (Text value : values) {
 			// 每次循环的value是一个“词语对应类别概率列表”格式
@@ -74,15 +71,6 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 				double prob = Double.parseDouble(pieces[1]);
 				probabilities.put(label, new Double(probabilities.containsKey(label) ? probabilities.get(label)
 						.doubleValue() + prob : prob));
-			}
-
-			// 同时也需要真实类别
-			if (trueLabels == null) {
-				String[] list = elements[1].split(":");
-				trueLabels = new ArrayList<String>();
-				for (String elem : list) {
-					trueLabels.add(elem);
-				}
 			}
 		}
 
@@ -99,7 +87,8 @@ public class ClassifyReducer extends Reducer<LongWritable, Text, LongWritable, I
 			}
 		}
 
-		context.write(key, new IntWritable(trueLabels.contains(bestLabel) ? 1 : 0));
+		// 输出：docID——>cate
+		context.write(key, new Text(bestLabel));
 	}
 
 }

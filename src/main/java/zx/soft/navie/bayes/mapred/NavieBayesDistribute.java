@@ -1,7 +1,6 @@
 package zx.soft.navie.bayes.mapred;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.hadoop.conf.Configuration;
@@ -25,6 +24,8 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import zx.soft.navie.bayes.utils.HDFSUtils;
+
 /**
  * 配置Naive Bayes的训练和测试作业
  * 
@@ -47,19 +48,6 @@ public class NavieBayesDistribute extends Configured implements Tool {
 	public static final String UNIQUE_LABELS = "navie.bayes.unique_labels";
 
 	/**
-	 * 删除HDFS中的某个目录
-	 * @param conf
-	 * @param path
-	 * @throws IOException
-	 */
-	public static void delete(Configuration conf, Path path) throws IOException {
-		FileSystem fs = path.getFileSystem(conf);
-		if (fs.exists(path)) {
-			fs.delete(path, true);
-		}
-	}
-
-	/**
 	 * 运行作业
 	 */
 	@Override
@@ -77,7 +65,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		Path joined = new Path(output.getParent(), "joined");
 
 		// Job 1a: 提取每个词语的信息
-		NavieBayesDistribute.delete(conf, model);
+		HDFSUtils.delete(conf, model);
 		Job trainWordJob = new Job(conf, "navie-bayes-wordtrain");
 		trainWordJob.setJarByClass(NavieBayesDistribute.class);
 		trainWordJob.setNumReduceTasks(numReducers);
@@ -104,7 +92,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 				trainWordJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_WORDS).getValue());
 
 		// Job 1b: 按照类别进行统计计算
-		NavieBayesDistribute.delete(conf, distCache);
+		HDFSUtils.delete(conf, distCache);
 		Job trainCateJob = new Job(conf, "navie-bayes-catetrain");
 		trainCateJob.setJarByClass(NavieBayesDistribute.class);
 		trainCateJob.setNumReduceTasks(numReducers);
@@ -133,7 +121,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_SAMPLES).getValue());
 
 		// Job 2: 在Reduce端，将测试数据和模型联接起来
-		NavieBayesDistribute.delete(conf, joined);
+		HDFSUtils.delete(conf, joined);
 		Job joinJob = new Job(conf, "navie-bayes-testprep");
 		joinJob.setJarByClass(NavieBayesDistribute.class);
 		joinJob.setNumReduceTasks(numReducers);
@@ -156,7 +144,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		}
 
 		// Job 3: 分类阶段
-		NavieBayesDistribute.delete(classifyConf, output);
+		HDFSUtils.delete(classifyConf, output);
 
 		// 添加到分布式缓存
 		FileSystem fs = distCache.getFileSystem(classifyConf);
@@ -170,7 +158,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		classify.setNumReduceTasks(numReducers);
 
 		classify.setMapperClass(ClassifyMapper.class);
-		classify.setReducerClass(ClassifyReducer.class);
+		classify.setReducerClass(ClassifyTestReducer.class);
 
 		classify.setInputFormatClass(KeyValueTextInputFormat.class);
 		classify.setOutputFormatClass(TextOutputFormat.class);

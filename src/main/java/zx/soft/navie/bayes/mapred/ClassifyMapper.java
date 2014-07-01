@@ -78,15 +78,17 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 			Long docId = new Long(Long.parseLong(elems[0]));
 			multipliers.put(docId, new Integer(multipliers.containsKey(docId) ? multipliers.get(docId).intValue() + 1
 					: 1));
-			if (!trueLabels.containsKey(docId)) {
-				// 添加该文档的真实类别列表
-				// 假设: 相同的文档有相同的类别
-				StringBuilder list = new StringBuilder();
-				for (int j = 1; j < elems.length; ++j) {
-					list.append(String.format("%s:", elems[j]));
+			if (elems.length > 1) {
+				if (!trueLabels.containsKey(docId)) {
+					// 添加该文档的真实类别列表
+					// 假设: 相同的文档有相同的类别
+					StringBuilder list = new StringBuilder();
+					for (int j = 1; j < elems.length; ++j) {
+						list.append(String.format("%s:", elems[j]));
+					}
+					String outval = list.toString();
+					trueLabels.put(docId, outval.substring(0, outval.length() - 1));
 				}
-				String outval = list.toString();
-				trueLabels.put(docId, outval.substring(0, outval.length() - 1));
 			}
 		}
 

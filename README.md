@@ -1,13 +1,99 @@
-Naive Bayes的基本实现以及分布式实现
-===========================
 
-分布式部分包含四个MapReduce作业: 
+# Naive Bayes的基本实现以及分布式实现
+
+> 基于Java实现。
+
+## 项目内容
+
+- [项目简介](#项目简介)
+- [情感分析](#情感分析)
+- [开发人员](#开发人员)
+
+## 项目简介
+
+### 项目起因
+
+本项目主要实现大规模文本分类，提供快速高效的情感分析框架。
+
+### 项目框架
+
+`simple`： 单线程、单机器的Navie Bayes算法的实现。
+
+`mapred`： 分布式部分包含四个MapReduce作业: 
+
 * 两个训练作业 
 * 一个用于将训练模型与测试数据集联接的作业
 * 一个用于分类的作业
+* 一个用于与DB联接的作业
 
-
-运行作业:
-
-    hadoop jar NavieBayesDriver.jar navieBayesDistribute -D train=/path/to/training/data -D test=/path/to/test/data -D output=/output/dir [-D reducers=10]
+```java
+输入数据示例：
+    cate1,cate2  测试 数据 集合
+    cate2,cate3  测试 数据 集合
     
+运行主作业:
+    hadoop jar NavieBayesDriver.jar navieBayesDistribute -D train=/path/to/training/data -D test=/path/to/test/data -D output=/output/dir [-D reducers=10]
+```
+    
+## 情感分析
+
+    主要包含两部分：2类情感分析和8类情感分析，最后制作大规模语料库集合。
+    
+### 2类情感分析
+    
+1> `正面（positive）`：期待（except）、高兴（glad）、喜爱（love）、惊讶（amazed）
+2> `负面（negative）`：焦虑（anxious）、悲伤（sad）、生气（angry、憎恨（hate）
+
+### 8类情感分析
+
+1> `期待（except）`
+2> `高兴（glad）`
+3> `喜爱（love）`
+4> `惊讶（amazed）`
+5> `焦虑（anxious）`
+6> `悲伤（sad）`
+7> `生气（angry）`
+8> `憎恨（hate）`
+
+### 语料库
+
+    最后对10亿条微博内容进行情感分析，制作8类情感语料库。
+
+### 数据预处理 
+
+    对以下几类微博数据进行相关测试，分别是：
+
+1> 原始微博：0
+2> 在1>基础上去掉用户名（@后面的名称）剩下的：1
+3> 在2>基础上去掉表情信息的：2
+4> 在1>基础上去掉转发的内容，以及用户名：3
+5> 在4>基础上去掉表情信息的：4
+
+** 例如： **
+1：支[高兴]持！//@投行新闻:表示服了 //@Andie是肥乔:上下折服。。。[汗] 
+2：支[高兴]持！表示服了 上下折服。。。[汗]
+3：支持！表示服了 上下折服。。。 
+4：支[高兴]持！
+5：支持！
+
+#### 测评结果
+处理级别  | 分类精度
+-------- | ---------
+0  | 00.00%
+1  | 00.00%
+2  | 00.00%
+3  | 00.00%
+4  | 00.00%
+
+> **备注:** 结果待补充。
+
+### 开发人员
+
+WeChat: wgybzb
+
+QQ: 1010437118
+
+E-mail: wgybzb@sina.cn
+
+
+

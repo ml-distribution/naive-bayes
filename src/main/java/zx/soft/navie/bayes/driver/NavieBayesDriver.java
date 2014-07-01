@@ -1,9 +1,11 @@
 package zx.soft.navie.bayes.driver;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.hadoop.util.ProgramDriver;
 
 import zx.soft.navie.bayes.mapred.NavieBayesDistribute;
+import zx.soft.navie.bayes.mapred.db.DbToHdfsDataProcess;
+import zx.soft.navie.bayes.mapred.db.HdfsToDBProcess;
+import zx.soft.navie.bayes.mapred.txt.TxtToHdfsDataProcess;
 import zx.soft.navie.bayes.simple.NavieBayesSimple;
 
 /**
@@ -13,31 +15,26 @@ import zx.soft.navie.bayes.simple.NavieBayesSimple;
  */
 public class NavieBayesDriver {
 
-	private static Logger logger = LoggerFactory.getLogger(NavieBayesDriver.class);
-
 	/**
 	 * 主函数
 	 */
-	public static void main(String[] args) {
+	public static void main(String argv[]) {
 
-		if (args.length == 0) {
-			System.err.println("Usage: Driver <class-name>");
-			System.exit(-1);
+		int exitCode = -1;
+		ProgramDriver pgd = new ProgramDriver();
+		try {
+			pgd.addClass("navieBayesSimple", NavieBayesSimple.class, "简单Navie-Bayes实现");
+			pgd.addClass("txtToHdfsDataProcess", TxtToHdfsDataProcess.class, "Txt数据处理，并存储到HDFS中");
+			pgd.addClass("dbToHdfsDataProcess", DbToHdfsDataProcess.class, "DB数据处理，并存储到HDFS中");
+			pgd.addClass("navieBayesDistribute", NavieBayesDistribute.class, "分布式Navie Bayes实现");
+			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Navie Bayes计算的结果从HDFS中导入到DB中");
+			// Success
+			exitCode = 0;
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
-		String[] leftArgs = new String[args.length - 1];
-		System.arraycopy(args, 1, leftArgs, 0, leftArgs.length);
 
-		switch (args[0]) {
-		case "navieBayesSimple":
-			logger.info("简单Navie Bayes实现： ");
-			NavieBayesSimple.main(leftArgs);
-			break;
-		case "navieBayesDistribute":
-			logger.info("分布式Navie Bayes实现： ");
-			NavieBayesDistribute.main(leftArgs);
-		default:
-			return;
-		}
+		System.exit(exitCode);
 
 	}
 
