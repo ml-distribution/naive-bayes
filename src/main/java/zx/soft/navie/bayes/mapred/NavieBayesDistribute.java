@@ -56,8 +56,8 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		Configuration conf = getConf();
 		Configuration classifyConf = new Configuration();
 
-		Path traindata = new Path(conf.get("train"));
-		Path testdata = new Path(conf.get("test"));
+		Path trainData = new Path(conf.get("train"));
+		Path testData = new Path(conf.get("test"));
 		Path output = new Path(conf.get("output"));
 		int numReducers = conf.getInt("reducers", 10);
 		Path distCache = new Path(output.getParent(), "cache");
@@ -80,7 +80,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		trainWordJob.setOutputKeyClass(Text.class);
 		trainWordJob.setOutputValueClass(Text.class);
 
-		FileInputFormat.addInputPath(trainWordJob, traindata);
+		FileInputFormat.addInputPath(trainWordJob, trainData);
 		FileOutputFormat.setOutputPath(trainWordJob, model);
 
 		if (!trainWordJob.waitForCompletion(true)) {
@@ -107,7 +107,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		trainCateJob.setOutputKeyClass(Text.class);
 		trainCateJob.setOutputValueClass(Text.class);
 
-		FileInputFormat.addInputPath(trainCateJob, traindata);
+		FileInputFormat.addInputPath(trainCateJob, trainData);
 		FileOutputFormat.setOutputPath(trainCateJob, distCache);
 
 		if (!trainCateJob.waitForCompletion(true)) {
@@ -126,7 +126,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 		joinJob.setJarByClass(NavieBayesDistribute.class);
 		joinJob.setNumReduceTasks(numReducers);
 		MultipleInputs.addInputPath(joinJob, model, KeyValueTextInputFormat.class, JoinModelMapper.class);
-		MultipleInputs.addInputPath(joinJob, testdata, TextInputFormat.class, JoinForecastMapper.class);
+		MultipleInputs.addInputPath(joinJob, testData, TextInputFormat.class, JoinForecastMapper.class);
 		joinJob.setReducerClass(JoinForecastReducer.class);
 
 		joinJob.setOutputFormatClass(TextOutputFormat.class);
