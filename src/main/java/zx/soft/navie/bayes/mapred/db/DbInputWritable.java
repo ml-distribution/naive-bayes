@@ -25,14 +25,13 @@ public class DbInputWritable implements Writable, DBWritable {
 
 	@Override
 	public void readFields(DataInput in) throws IOException {
-		wid = in.readInt();
+		wid = in.readLong();
 		text = Text.readString(in);
 	}
 
 	@Override
 	public void readFields(ResultSet rs) throws SQLException {
-		//Resultset object represents the data returned from a SQL statement
-		wid = rs.getInt(1);
+		wid = rs.getLong(1);
 		text = rs.getString(2);
 	}
 

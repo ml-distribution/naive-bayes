@@ -15,7 +15,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import zx.soft.navie.bayes.mapred.txt.TxtToHdfsDataProcess;
 import zx.soft.navie.bayes.utils.ConfigUtil;
 import zx.soft.navie.bayes.utils.HDFSUtils;
 
@@ -26,7 +25,7 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 	 */
 	public static void main(String[] args) {
 		try {
-			int exitCode = ToolRunner.run(new TxtToHdfsDataProcess(), args);
+			int exitCode = ToolRunner.run(new DbToHdfsDataProcess(), args);
 			System.exit(exitCode);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -68,13 +67,14 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 		job.setInputFormatClass(DBInputFormat.class);
 		// 是否可设置多个数据表？
 		DBInputFormat.setInput(job, DbInputWritable.class, tablename, //input table name
-				null, "wid", new String[] { "wid", "text" } // table columns
+				null, null, new String[] { "wid", "text" } // table columns
 				);
 
 		if (!job.waitForCompletion(true)) {
 			System.err.println("ERROR: DbToHdfsDataProcess failed!");
 			return 1;
 		}
+
 		return 0;
 
 	}
