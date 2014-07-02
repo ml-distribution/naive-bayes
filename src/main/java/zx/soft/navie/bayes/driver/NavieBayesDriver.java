@@ -29,10 +29,11 @@ public class NavieBayesDriver {
 			pgd.addClass("dbToHdfsDataProcess", DbToHdfsDataProcess.class, "DB数据处理，并存储到HDFS中");
 			pgd.addClass("navieBayesDistribute", NavieBayesDistribute.class, "分布式Navie Bayes实现");
 			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Navie Bayes计算的结果从HDFS中导入到DB中");
+			pgd.driver(argv);
 			// Success
 			exitCode = 0;
 		} catch (Throwable e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 
 		System.exit(exitCode);

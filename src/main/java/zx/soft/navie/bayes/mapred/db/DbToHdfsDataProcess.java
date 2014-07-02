@@ -68,7 +68,7 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 		job.setInputFormatClass(DBInputFormat.class);
 		// 是否可设置多个数据表？
 		DBInputFormat.setInput(job, DbInputWritable.class, tablename, //input table name
-				null, null, new String[] { "wid", "text" } // table columns
+				null, "wid", new String[] { "wid", "text" } // table columns
 				);
 
 		if (!job.waitForCompletion(true)) {
