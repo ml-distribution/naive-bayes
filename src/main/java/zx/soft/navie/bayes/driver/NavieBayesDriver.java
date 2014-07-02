@@ -10,7 +10,8 @@ import zx.soft.navie.bayes.simple.NavieBayesSimple;
 
 /**
  * 驱动类
- * @author zhumm
+ * 
+ * @author wanggang
  *
  */
 public class NavieBayesDriver {
