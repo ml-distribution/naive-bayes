@@ -2,7 +2,8 @@ package zx.soft.navie.bayes.data;
 
 /**
  * 训练集工厂接口
- * @author zhumm
+ * 
+ * @author wanggang
  *
  */
 public interface TrainDataFactory {

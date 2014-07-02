@@ -11,6 +11,7 @@ import zx.soft.navie.bayes.utils.ConfigUtil;
 
 /**
  * 舆情数据JDBC
+ * 
  * @author wanggang
  *
  */

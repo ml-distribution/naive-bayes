@@ -14,7 +14,8 @@ import zx.soft.navie.bayes.data.TrainDataFactory;
 
 /**
  * Navie Bayes单节点实现
- * @author zhumm
+ * 
+ * @author wanggang
  *
  */
 public class NavieBayesSimple {

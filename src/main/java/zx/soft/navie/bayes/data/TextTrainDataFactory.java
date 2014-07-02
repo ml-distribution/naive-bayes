@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 获取简单的文本训练数据
- * @author zhumm
+ * 
+ * @author wanggang
  *
  */
 public class TextTrainDataFactory implements TrainDataFactory {

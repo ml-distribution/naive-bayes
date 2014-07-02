@@ -16,7 +16,8 @@ import cc.pp.analyzer.ik.lucene.IKAnalyzer;
 
 /**
  * 分词工具类
- * @author zhumm
+ * 
+ * @author wanggang
  *
  */
 public class AnalyzerTool {

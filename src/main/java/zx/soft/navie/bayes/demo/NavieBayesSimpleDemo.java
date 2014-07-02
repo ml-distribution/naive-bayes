@@ -3,6 +3,11 @@ package zx.soft.navie.bayes.demo;
 import zx.soft.navie.bayes.data.TextTrainDataFactory;
 import zx.soft.navie.bayes.simple.NavieBayesSimple;
 
+/**
+ * 
+ * @author wanggang
+ *
+ */
 public class NavieBayesSimpleDemo {
 
 	public static void main(String[] args) {
