@@ -10,7 +10,7 @@ public class TrainsVector {
 	 * @return
 	 */
 	public static Vector<String> tokenizeDoc(String[] words) {
-		Vector<String> tokens = new Vector<String>();
+		Vector<String> tokens = new Vector<>();
 		for (int i = 1; i < words.length; i++) {
 			if (words[i].length() > 0) {
 				tokens.add(words[i]);
@@ -26,7 +26,7 @@ public class TrainsVector {
 	 */
 	public static Vector<String> tokenizeCates(String cates) {
 		String[] tokens = cates.split(",");
-		Vector<String> retval = new Vector<String>();
+		Vector<String> retval = new Vector<>();
 		for (String token : tokens) {
 			retval.add(token);
 		}

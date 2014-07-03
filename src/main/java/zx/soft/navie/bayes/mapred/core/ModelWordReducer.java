@@ -32,7 +32,7 @@ public class ModelWordReducer extends Reducer<Text, Text, Text, Text> {
 		// 总的词语量
 		wordsSize = context.getConfiguration().getLong(NavieBayesConstant.UNIQUE_WORDS, 100);
 		// 每个类别下的词语总量
-		wordsCountPerCate = new HashMap<String, Integer>();
+		wordsCountPerCate = new HashMap<>();
 
 		// 在DistributedCache下建立一个类别数据的HashMap
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
@@ -50,7 +50,7 @@ public class ModelWordReducer extends Reducer<Text, Text, Text, Text> {
 				String[] elems = line.split("\\s+");
 				String cate = elems[0];
 				String[] counts = elems[1].split(":");
-				wordsCountPerCate.put(cate, new Integer(Integer.parseInt(counts[1])));
+				wordsCountPerCate.put(cate, Integer.parseInt(counts[1]));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -66,10 +66,10 @@ public class ModelWordReducer extends Reducer<Text, Text, Text, Text> {
 			HashMap<String, Integer> cateCountsOfWord = null;
 			if (wordsInfo.length() > 0) {
 				String[] cateCounts = wordsInfo.split(" ");
-				cateCountsOfWord = new HashMap<String, Integer>();
+				cateCountsOfWord = new HashMap<>();
 				for (String cateCount : cateCounts) {
 					String[] elems = cateCount.split(":");
-					cateCountsOfWord.put(elems[0], new Integer(Integer.parseInt(elems[1])));
+					cateCountsOfWord.put(elems[0], Integer.parseInt(elems[1]));
 				}
 			}
 
