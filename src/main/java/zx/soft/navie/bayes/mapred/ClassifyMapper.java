@@ -15,6 +15,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import zx.soft.navie.bayes.mapred.core.NavieBayesConstant;
+
 /**
  * 计算每个类别下的每个词的概率
  * 
@@ -24,12 +26,14 @@ import org.apache.hadoop.mapreduce.Mapper;
 public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 
 	private long wordsSize;
-	private HashMap<String, Integer> wordsUnderCate;
+	private HashMap<String, Integer> wordsCountPerCate;
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		wordsSize = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_WORDS, 100);
-		wordsUnderCate = new HashMap<String, Integer>();
+		// 总的词语量
+		wordsSize = context.getConfiguration().getLong(NavieBayesConstant.UNIQUE_WORDS, 100);
+		// 每个类别下的词语总量
+		wordsCountPerCate = new HashMap<String, Integer>();
 
 		// 在DistributedCache下建立一个类别数据的HashMap
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
@@ -47,7 +51,7 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 				String[] elems = line.split("\\s+");
 				String cate = elems[0];
 				String[] counts = elems[1].split(":");
-				wordsUnderCate.put(cate, new Integer(Integer.parseInt(counts[1])));
+				wordsCountPerCate.put(cate, new Integer(Integer.parseInt(counts[1])));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -57,61 +61,73 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 	public void map(Text key, Text value, Context context) throws InterruptedException, IOException {
 
 		String[] elements = value.toString().split("::");
-		String model = elements[0];
+		// 该词语（key）在每个类别中出现的次数：“cate-i:10 cate-j:9 cate-k:41”
+		String wordsInfo = elements[0];
 
-		// 模型的分类及其次数
-		HashMap<String, Integer> modelCounts = null;
-		if (model.length() > 0) {
-			String[] cateCounts = model.split(" ");
-			modelCounts = new HashMap<String, Integer>();
+		// 该词语的cate：count对
+		HashMap<String, Integer> cateCountsOfWord = null;
+		if (wordsInfo.length() > 0) {
+			String[] cateCounts = wordsInfo.split(" ");
+			cateCountsOfWord = new HashMap<>();
 			for (String cateCount : cateCounts) {
 				String[] elems = cateCount.split(":");
-				modelCounts.put(elems[0], new Integer(Integer.parseInt(elems[1])));
+				cateCountsOfWord.put(elems[0], Integer.parseInt(elems[1]));
 			}
 		}
 
-		// 该词语在每个文档中出现的次数
-		HashMap<Long, Integer> multipliers = new HashMap<Long, Integer>();
-		HashMap<Long, String> trueLabels = new HashMap<Long, String>();
+		// 记录该词语在每个文档中出现的次数,docId:count
+		HashMap<Long, Integer> docIdCount = new HashMap<>();
+		// 记录真实类别,docId:cate-i:cate-j
+		HashMap<Long, String> trueCates = new HashMap<>();
+		// 循环出现该词语的每个文档
 		for (int i = 1; i < elements.length; ++i) {
+			// docId,cate
 			String[] elems = elements[i].split(",");
-			Long docId = new Long(Long.parseLong(elems[0]));
-			multipliers.put(docId, new Integer(multipliers.containsKey(docId) ? multipliers.get(docId).intValue() + 1
-					: 1));
+			// 文档Id
+			long docId = new Long(Long.parseLong(elems[0]));
+			docIdCount
+					.put(docId, new Integer(docIdCount.containsKey(docId) ? docIdCount.get(docId).intValue() + 1 : 1));
+			// 存在多个类别的情况下
 			if (elems.length > 1) {
-				if (!trueLabels.containsKey(docId)) {
+				if (!trueCates.containsKey(docId)) {
 					// 添加该文档的真实类别列表
 					// 假设: 相同的文档有相同的类别
-					StringBuilder list = new StringBuilder();
+					StringBuilder cateList = new StringBuilder();
 					for (int j = 1; j < elems.length; ++j) {
-						list.append(String.format("%s:", elems[j]));
+						cateList.append(String.format("%s:", elems[j]));
 					}
-					String outval = list.toString();
-					trueLabels.put(docId, outval.substring(0, outval.length() - 1));
+					trueCates.put(docId, cateList.toString().substring(0, cateList.toString().length() - 1));
 				}
 			}
 		}
 
-		// 循环每个类别, 对于每个文档ID，计算词语在类别下面的概率
-		for (Long docId : trueLabels.keySet()) {
+		// 循环出现该词语的每个文档，计算每个文档中该词语在每个类别下出现的概率，增加了权重系数
+		for (Long docId : trueCates.keySet()) {
 			StringBuilder probs = new StringBuilder();
-			for (String label : wordsUnderCate.keySet()) {
-				int wordLabelCount = wordsUnderCate.get(label).intValue();
+			// 计算该词语在所有类别下分别出现的概率
+			for (String cate : wordsCountPerCate.keySet()) {
+				// 类别cate下的词语总数
+				int wordCountOfCate = wordsCountPerCate.get(cate).intValue();
+				// 该词语在cate下出现的次数
 				int count = 0;
-				if (modelCounts != null && modelCounts.containsKey(label)) {
-					count = modelCounts.get(label).intValue();
+				if (cateCountsOfWord != null && cateCountsOfWord.containsKey(cate)) {
+					count = cateCountsOfWord.get(cate).intValue();
 				}
-
-				int multiplier = multipliers.get(docId);
-				double wordProb = multiplier
-						* (Math.log(count + NavieBayesDistribute.ALPHA) - Math.log(wordLabelCount
-								+ (NavieBayesDistribute.ALPHA * wordsSize)));
-				probs.append(String.format("%s:%s,", label, wordProb));
+				// 该词语在文档docId中出现的次数,可认为是权重
+				int weight = docIdCount.get(docId);
+				//   word在docId中出现的次数×log(word在cate下出现的次数/(cate的词语总数+词语总数))
+				// = 权重×word在cate下出现的概率	
+				double wordProbOfCate = weight
+						* (Math.log(count + NavieBayesConstant.ALPHA) - Math.log(wordCountOfCate
+								+ (NavieBayesConstant.ALPHA * wordsSize)));
+				// 该词语在cate下出现的概率
+				probs.append(String.format("%s:%s,", cate, wordProbOfCate));
 			}
-			// 输出文档ID——><cate:wordProbability>列表::真实类别
-			String output = probs.toString();
-			context.write(new LongWritable(docId),
-					new Text(String.format("%s::%s", output.substring(0, output.length() - 1), trueLabels.get(docId))));
+			// 输出文档ID——><cate:wordProbOfCate>列表::真实类别
+			context.write(
+					new LongWritable(docId),
+					new Text(String.format("%s::%s", probs.toString().substring(0, probs.toString().length() - 1),
+							trueCates.get(docId))));
 		}
 	}
 

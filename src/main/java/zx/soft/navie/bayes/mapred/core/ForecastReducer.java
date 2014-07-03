@@ -1,9 +1,8 @@
-package zx.soft.navie.bayes.mapred;
+package zx.soft.navie.bayes.mapred.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.hadoop.filecache.DistributedCache;
@@ -12,12 +11,9 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-
-import zx.soft.navie.bayes.mapred.core.NavieBayesConstant;
 
 /**
  * 计算每个文档的累加的log(prob(word|cate))概率和
@@ -25,19 +21,15 @@ import zx.soft.navie.bayes.mapred.core.NavieBayesConstant;
  * @author wgybzb
  *
  */
-public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritable, IntWritable> {
+public class ForecastReducer extends Reducer<LongWritable, Text, LongWritable, Text> {
 
-	private long totalSamples;
-	private long uniqueCates;
-	private HashMap<String, Integer> docsCountPerCate;
+	private HashMap<String, Double> priorOfCates;
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		totalSamples = context.getConfiguration().getLong(NavieBayesConstant.TOTAL_SAMPLES, 100);
-		uniqueCates = context.getConfiguration().getLong(NavieBayesConstant.UNIQUE_CATES, 100);
-		docsCountPerCate = new HashMap<String, Integer>();
+		priorOfCates = new HashMap<>();
 
-		// 在DistributedCache中建立HashMap存放类别数据
+		// 在DistributedCache中建立HashMap存放类别出现的概率
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
 		if (files == null || files.length < 1) {
 			throw new IOException("DistributedCache returned an empty file set!");
@@ -51,9 +43,7 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 			String line;
 			while ((line = in.readLine()) != null) {
 				String[] elems = line.split("\\s+");
-				String cate = elems[0];
-				String[] counts = elems[1].split(":");
-				docsCountPerCate.put(cate, new Integer(Integer.parseInt(counts[0])));
+				priorOfCates.put(elems[0], Double.parseDouble(elems[1]));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -64,28 +54,17 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 			IOException {
 
 		// 记录docId在每个类别下面的概率
-		HashMap<String, Double> probsOfDocInCate = new HashMap<String, Double>();
-		ArrayList<String> trueCates = null;
+		HashMap<String, Double> probsOfDocInCate = new HashMap<>();
 
 		// 每次循环的value是一个“词语对应类别概率列表”格式
 		for (Text value : values) {
-			String[] elements = value.toString().split("::");
-			String[] wordProbOfCates = elements[0].split(",");
+			String[] wordProbOfCates = value.toString().split(",");
 			for (String wordProbOfCate : wordProbOfCates) {
 				String[] pieces = wordProbOfCate.split(":");
 				String cate = pieces[0];
 				double prob = Double.parseDouble(pieces[1]);
-				probsOfDocInCate.put(cate, new Double(probsOfDocInCate.containsKey(cate) ? probsOfDocInCate.get(cate)
-						.doubleValue() + prob : prob));
-			}
-
-			// 同时也需要真实类别
-			if (trueCates == null) {
-				String[] list = elements[1].split(":");
-				trueCates = new ArrayList<String>();
-				for (String elem : list) {
-					trueCates.add(elem);
-				}
+				probsOfDocInCate.put(cate, probsOfDocInCate.containsKey(cate) ? probsOfDocInCate.get(cate) + prob
+						: prob);
 			}
 		}
 
@@ -93,18 +72,15 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 		double bestProb = Double.NEGATIVE_INFINITY;
 		String bestCate = null;
 		for (String cate : probsOfDocInCate.keySet()) {
-			// cate下的文档总数/(样本总数+类别总数)，可以在训练模型中计算出来
-			double prior = Math.log(docsCountPerCate.get(cate).intValue() + NavieBayesDistribute.ALPHA)
-					- Math.log(totalSamples + (NavieBayesDistribute.ALPHA * uniqueCates));
-			double totalProb = probsOfDocInCate.get(cate).doubleValue() + prior;
+			double totalProb = probsOfDocInCate.get(cate) + priorOfCates.get(cate);
 			if (totalProb > bestProb) {
 				bestCate = cate;
 				bestProb = totalProb;
 			}
 		}
 
-		// 输出正确与否
-		context.write(key, new IntWritable(trueCates.contains(bestCate) ? 1 : 0));
+		// 输出:docId——>cate
+		context.write(key, new Text(bestCate));
 	}
 
 }
