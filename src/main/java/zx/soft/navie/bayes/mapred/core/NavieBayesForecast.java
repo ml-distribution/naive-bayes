@@ -41,12 +41,12 @@ public class NavieBayesForecast extends Configured implements Tool {
 		// 获取预测数据路径和模型数据路径
 		Path forecastData = new Path(conf.get("forecast"));
 		Path model = new Path(conf.get("model"));
-		// model数据
-		Path modelCate = new Path(model, "modelCates");
-		Path modelWord = new Path(model, "modelWords");
 		// 数据结果路径
 		Path output = new Path(conf.get("output"));
 		Path joined = new Path(output.getParent(), "joined");
+		// model数据
+		Path modelCate = new Path(model, "modelCates");
+		Path modelWord = new Path(model, "modelWords");
 		// 删除已有路径
 		HDFSUtils.delete(conf, joined);
 		HDFSUtils.delete(classifyConf, output);

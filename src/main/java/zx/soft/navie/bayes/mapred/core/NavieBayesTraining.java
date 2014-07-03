@@ -90,7 +90,7 @@ public class NavieBayesTraining extends Configured implements Tool {
 		 */
 		Job trainCateJob = new Job(conf, "Navie-Bayes-Training-Cates");
 		trainCateJob.setJarByClass(NavieBayesTraining.class);
-		trainCateJob.setNumReduceTasks(numReducers);
+		trainCateJob.setNumReduceTasks(1);
 		trainCateJob.setMapperClass(TrainCateMapper.class);
 		trainCateJob.setReducerClass(TrainCateReducer.class);
 		trainCateJob.setInputFormatClass(TextInputFormat.class);
