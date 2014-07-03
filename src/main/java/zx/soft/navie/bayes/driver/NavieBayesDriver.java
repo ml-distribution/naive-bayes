@@ -3,6 +3,8 @@ package zx.soft.navie.bayes.driver;
 import org.apache.hadoop.util.ProgramDriver;
 
 import zx.soft.navie.bayes.mapred.NavieBayesDistribute;
+import zx.soft.navie.bayes.mapred.core.NavieBayesForecast;
+import zx.soft.navie.bayes.mapred.core.NavieBayesTraining;
 import zx.soft.navie.bayes.mapred.db.DbToHdfsDataProcess;
 import zx.soft.navie.bayes.mapred.db.HdfsToDBProcess;
 import zx.soft.navie.bayes.mapred.txt.TxtToHdfsDataProcess;
@@ -28,7 +30,9 @@ public class NavieBayesDriver {
 			pgd.addClass("txtToHdfsDataProcess", TxtToHdfsDataProcess.class, "Txt数据处理，并存储到HDFS中");
 			pgd.addClass("dbToHdfsDataProcess", DbToHdfsDataProcess.class, "DB数据处理，并存储到HDFS中");
 			pgd.addClass("navieBayesDistribute", NavieBayesDistribute.class, "分布式Navie Bayes实现");
-			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Navie Bayes计算的结果从HDFS中导入到DB中");
+			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Navie-Bayes计算的结果从HDFS中导入到DB中");
+			pgd.addClass("navieBayesTraining", NavieBayesTraining.class, "Navie-Bayes模型训练");
+			pgd.addClass("navieBayesForecast", NavieBayesForecast.class, "Navie-Bayes分类预测");
 			pgd.driver(args);
 			// Success
 			exitCode = 0;
