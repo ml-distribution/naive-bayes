@@ -1,7 +1,6 @@
-package zx.soft.navie.bayes.demo;
+package zx.soft.navie.bayes.simple;
 
 import zx.soft.navie.bayes.data.TextTrainDataFactory;
-import zx.soft.navie.bayes.simple.NavieBayesSimple;
 
 /**
  * 
