@@ -8,6 +8,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.db.DBConfiguration;
 import org.apache.hadoop.mapreduce.lib.db.DBInputFormat;
@@ -36,7 +38,13 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 
 		Configuration conf = getConf();
-		int numReduceTasks = conf.getInt("numReduceTasks", 8);
+		/**
+		 * 设置Mapper输出压缩
+		 */
+		conf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
+		conf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
+
+		int numReduceTasks = conf.getInt("numReduceTasks", 20);
 
 		// 由于数据表很多，而每次只能处理一个数据表，所以需要批量处理多个数据表
 		String tablename = conf.get("tableName");
@@ -50,7 +58,7 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 				props.getProperty("db.username"), // username
 				props.getProperty("db.password")); //password
 
-		Job job = new Job(conf, "Navie-Bayes-DB-DataProcess");
+		Job job = new Job(conf, "Naive-Bayes-DB-DataProcess");
 		job.setJarByClass(DbToHdfsDataProcess.class);
 		job.setMapperClass(DbToHdfsMapper.class);
 		job.setReducerClass(DbToHdfsReducer.class);
@@ -63,6 +71,12 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 		job.setOutputValueClass(Text.class);
 
 		FileOutputFormat.setOutputPath(job, dstDataPath);
+
+		/**
+		 * 设置输出压缩
+		 */
+		FileOutputFormat.setCompressOutput(job, true);
+		FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
 
 		job.setInputFormatClass(DBInputFormat.class);
 		// 是否可设置多个数据表？

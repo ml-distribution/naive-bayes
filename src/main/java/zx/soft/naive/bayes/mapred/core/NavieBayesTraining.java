@@ -63,7 +63,7 @@ public class NavieBayesTraining extends Configured implements Tool {
 		 */
 		Job trainWordJob = new Job(conf, "Naive-Bayes-Training-Words");
 		trainWordJob.setJarByClass(NavieBayesTraining.class);
-		trainWordJob.setNumReduceTasks(numReducers);
+		trainWordJob.setNumReduceTasks(numReducers / 2);
 		trainWordJob.setMapperClass(TrainWordMapper.class);
 		trainWordJob.setReducerClass(TrainWordReducer.class);
 		trainWordJob.setInputFormatClass(TextInputFormat.class);

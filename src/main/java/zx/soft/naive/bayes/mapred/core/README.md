@@ -9,6 +9,3 @@ hadoop jar naive-bayes-jar-with-dependencies.jar naiveBayesTraining -D train=out
 
 hadoop jar naive-bayes-jar-with-dependencies.jar naiveBayesForecast -D forecast=weibo-data -D model=train-model -D output=output-result
 
-
-
-

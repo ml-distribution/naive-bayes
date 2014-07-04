@@ -125,7 +125,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>zx.soft.navie.bayes.driver.NaiveBayesDriver</mainClass>
+							<mainClass>zx.soft.naive.bayes.driver.NaiveBayesDriver</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

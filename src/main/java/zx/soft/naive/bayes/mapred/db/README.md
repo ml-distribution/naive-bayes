@@ -13,3 +13,9 @@
 3. 方法三：没有中间数据，但是在读写数据阶段，受MySQL读写性能的影响；
 
 > **备注:** 需要将JDBC驱动jar包拷贝到hadoop的lib目录下，一般使用mysql-connector-java-5.1.6.jar。
+
+```java
+运行脚本：
+
+hadoop jar naive-bayes-jar-with-dependencies.jar dbToHdfsDataProcess -D tableName=sina_user_weibos_1386622641 -D processData=sina_user_weibos_1386622641
+```

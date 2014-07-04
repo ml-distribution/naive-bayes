@@ -8,6 +8,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
@@ -36,6 +38,11 @@ public class NaiveBayesForecast extends Configured implements Tool {
 
 		Configuration conf = getConf();
 		Configuration classifyConf = new Configuration();
+		// 设置Mapper输出压缩
+		conf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
+		conf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
+		classifyConf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
+		classifyConf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
 		// 配置reducer个数，可选
 		int numReducers = conf.getInt("reducers", 20);
 		// 获取预测数据路径和模型数据路径
@@ -75,6 +82,9 @@ public class NaiveBayesForecast extends Configured implements Tool {
 		joinJob.setOutputKeyClass(Text.class);
 		joinJob.setOutputValueClass(Text.class);
 		FileOutputFormat.setOutputPath(joinJob, joined);
+		// 设置输出压缩
+		FileOutputFormat.setCompressOutput(joinJob, true);
+		FileOutputFormat.setOutputCompressorClass(joinJob, GzipCodec.class);
 
 		if (!joinJob.waitForCompletion(true)) {
 			System.err.println("ERROR: Joining failed!");
@@ -97,6 +107,9 @@ public class NaiveBayesForecast extends Configured implements Tool {
 		classifyJob.setOutputValueClass(Text.class);
 		FileInputFormat.addInputPath(classifyJob, joined);
 		FileOutputFormat.setOutputPath(classifyJob, output);
+		// 设置输出压缩
+		FileOutputFormat.setCompressOutput(classifyJob, true);
+		FileOutputFormat.setOutputCompressorClass(classifyJob, GzipCodec.class);
 
 		if (!classifyJob.waitForCompletion(true)) {
 			System.err.println("ERROR: Classification failed!");
