@@ -107,7 +107,7 @@ public class NavieBayesForecast extends Configured implements Tool {
 	}
 
 	/**
-	 * @param args
+	 * 主函数
 	 */
 	public static void main(String[] args) {
 		try {

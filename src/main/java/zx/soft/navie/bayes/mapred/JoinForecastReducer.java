@@ -22,7 +22,7 @@ public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text key, Iterable<Text> values, Context context) throws InterruptedException, IOException {
 
 		String modelLine = null;
-		ArrayList<String> documents = new ArrayList<String>();
+		ArrayList<String> documents = new ArrayList<>();
 		for (Text value : values) {
 			String line = value.toString();
 			if (line.contains(":")) {

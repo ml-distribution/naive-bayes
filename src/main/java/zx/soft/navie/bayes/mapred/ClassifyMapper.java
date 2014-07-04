@@ -33,7 +33,7 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 		// 总的词语量
 		wordsSize = context.getConfiguration().getLong(NavieBayesConstant.UNIQUE_WORDS, 100);
 		// 每个类别下的词语总量
-		wordsCountPerCate = new HashMap<String, Integer>();
+		wordsCountPerCate = new HashMap<>();
 
 		// 在DistributedCache下建立一个类别数据的HashMap
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
@@ -51,7 +51,7 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 				String[] elems = line.split("\\s+");
 				String cate = elems[0];
 				String[] counts = elems[1].split(":");
-				wordsCountPerCate.put(cate, new Integer(Integer.parseInt(counts[1])));
+				wordsCountPerCate.put(cate, Integer.parseInt(counts[1]));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -84,9 +84,8 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 			// docId,cate
 			String[] elems = elements[i].split(",");
 			// 文档Id
-			long docId = new Long(Long.parseLong(elems[0]));
-			docIdCount
-					.put(docId, new Integer(docIdCount.containsKey(docId) ? docIdCount.get(docId).intValue() + 1 : 1));
+			long docId = Long.parseLong(elems[0]);
+			docIdCount.put(docId, docIdCount.containsKey(docId) ? docIdCount.get(docId).intValue() + 1 : 1);
 			// 存在多个类别的情况下
 			if (elems.length > 1) {
 				if (!trueCates.containsKey(docId)) {
@@ -102,7 +101,7 @@ public class ClassifyMapper extends Mapper<Text, Text, LongWritable, Text> {
 		}
 
 		// 循环出现该词语的每个文档，计算每个文档中该词语在每个类别下出现的概率，增加了权重系数
-		for (Long docId : trueCates.keySet()) {
+		for (long docId : trueCates.keySet()) {
 			StringBuilder probs = new StringBuilder();
 			// 计算该词语在所有类别下分别出现的概率
 			for (String cate : wordsCountPerCate.keySet()) {

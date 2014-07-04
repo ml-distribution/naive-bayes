@@ -89,8 +89,8 @@ public class NavieBayesTrain extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(NavieBayesDistribute.UNIQUE_LABELS,
-				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_LABELS).getValue());
+		classifyConf.setLong(NavieBayesDistribute.UNIQUE_CATES,
+				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_CATES).getValue());
 		classifyConf.setLong(NavieBayesDistribute.TOTAL_SAMPLES,
 				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_SAMPLES).getValue());
 

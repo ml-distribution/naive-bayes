@@ -37,7 +37,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 	public static final double ALPHA = 1.0;
 
 	static enum NB_COUNTERS {
-		TOTAL_SAMPLES, UNIQUE_WORDS, UNIQUE_LABELS
+		TOTAL_SAMPLES, UNIQUE_WORDS, UNIQUE_CATES
 	}
 
 	// 样本数，如果每个文档是单个类别的话，文档数和样本数一样，否则样本数大于文档数，实际则以样本数为准
@@ -45,7 +45,7 @@ public class NavieBayesDistribute extends Configured implements Tool {
 	// 词数
 	public static final String UNIQUE_WORDS = "navie.bayes.unique_words";
 	// 类别数
-	public static final String UNIQUE_LABELS = "navie.bayes.unique_labels";
+	public static final String UNIQUE_CATES = "navie.bayes.unique_cates";
 
 	/**
 	 * 运行作业
@@ -115,8 +115,8 @@ public class NavieBayesDistribute extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(NavieBayesDistribute.UNIQUE_LABELS,
-				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_LABELS).getValue());
+		classifyConf.setLong(NavieBayesDistribute.UNIQUE_CATES,
+				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_CATES).getValue());
 		classifyConf.setLong(NavieBayesDistribute.TOTAL_SAMPLES,
 				trainCateJob.getCounters().findCounter(NavieBayesDistribute.NB_COUNTERS.TOTAL_SAMPLES).getValue());
 

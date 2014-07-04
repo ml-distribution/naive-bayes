@@ -20,7 +20,7 @@ public class TrainCateReducer extends Reducer<Text, IntWritable, Text, Text> {
 			IOException {
 
 		// 统计类别个数
-		context.getCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_LABELS).increment(1);
+		context.getCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_CATES).increment(1);
 
 		long pY = 0;
 		long pYW = 0;

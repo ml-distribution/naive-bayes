@@ -21,10 +21,10 @@ public class TrainWordReducer extends Reducer<Text, Text, Text, Text> {
 		context.getCounter(NavieBayesDistribute.NB_COUNTERS.UNIQUE_WORDS).increment(1);
 
 		// 统计各个类别及其出现次数
-		HashMap<String, Integer> counts = new HashMap<String, Integer>();
+		HashMap<String, Integer> counts = new HashMap<>();
 		for (Text cate : values) {
 			String cateKey = cate.toString();
-			counts.put(cateKey, new Integer(counts.containsKey(cateKey) ? counts.get(cateKey).intValue() + 1 : 1));
+			counts.put(cateKey, counts.containsKey(cateKey) ? counts.get(cateKey).intValue() + 1 : 1);
 		}
 		StringBuilder outKey = new StringBuilder();
 		for (String cate : counts.keySet()) {

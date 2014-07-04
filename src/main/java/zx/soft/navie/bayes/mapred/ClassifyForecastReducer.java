@@ -30,8 +30,8 @@ public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWri
 	@Override
 	protected void setup(Context context) throws IOException {
 		totalSamples = context.getConfiguration().getLong(NavieBayesDistribute.TOTAL_SAMPLES, 100);
-		uniqueCates = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_LABELS, 100);
-		docsWithCate = new HashMap<String, Integer>();
+		uniqueCates = context.getConfiguration().getLong(NavieBayesDistribute.UNIQUE_CATES, 100);
+		docsWithCate = new HashMap<>();
 
 		// 在DistributedCache中建立HashMap存放类别数据
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
@@ -49,7 +49,7 @@ public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWri
 				String[] elems = line.split("\\s+");
 				String label = elems[0];
 				String[] counts = elems[1].split(":");
-				docsWithCate.put(label, new Integer(Integer.parseInt(counts[0])));
+				docsWithCate.put(label, Integer.parseInt(counts[0]));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -59,7 +59,7 @@ public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWri
 	public void reduce(LongWritable key, Iterable<Text> values, Context context) throws InterruptedException,
 			IOException {
 
-		HashMap<String, Double> probabilities = new HashMap<String, Double>();
+		HashMap<String, Double> probabilities = new HashMap<>();
 
 		for (Text value : values) {
 			// 每次循环的value是一个“词语对应类别概率列表”格式
@@ -69,8 +69,8 @@ public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWri
 				String[] pieces = labelProb.split(":");
 				String label = pieces[0];
 				double prob = Double.parseDouble(pieces[1]);
-				probabilities.put(label, new Double(probabilities.containsKey(label) ? probabilities.get(label)
-						.doubleValue() + prob : prob));
+				probabilities.put(label, probabilities.containsKey(label) ? probabilities.get(label).doubleValue()
+						+ prob : prob);
 			}
 		}
 

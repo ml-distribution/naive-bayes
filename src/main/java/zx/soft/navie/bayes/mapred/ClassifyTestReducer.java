@@ -35,7 +35,7 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 	protected void setup(Context context) throws IOException {
 		totalSamples = context.getConfiguration().getLong(NavieBayesConstant.TOTAL_SAMPLES, 100);
 		uniqueCates = context.getConfiguration().getLong(NavieBayesConstant.UNIQUE_CATES, 100);
-		docsCountPerCate = new HashMap<String, Integer>();
+		docsCountPerCate = new HashMap<>();
 
 		// 在DistributedCache中建立HashMap存放类别数据
 		Path[] files = DistributedCache.getLocalCacheFiles(context.getConfiguration());
@@ -53,7 +53,7 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 				String[] elems = line.split("\\s+");
 				String cate = elems[0];
 				String[] counts = elems[1].split(":");
-				docsCountPerCate.put(cate, new Integer(Integer.parseInt(counts[0])));
+				docsCountPerCate.put(cate, Integer.parseInt(counts[0]));
 			}
 			IOUtils.closeStream(in);
 		}
@@ -64,7 +64,7 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 			IOException {
 
 		// 记录docId在每个类别下面的概率
-		HashMap<String, Double> probsOfDocInCate = new HashMap<String, Double>();
+		HashMap<String, Double> probsOfDocInCate = new HashMap<>();
 		ArrayList<String> trueCates = null;
 
 		// 每次循环的value是一个“词语对应类别概率列表”格式
@@ -75,14 +75,14 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 				String[] pieces = wordProbOfCate.split(":");
 				String cate = pieces[0];
 				double prob = Double.parseDouble(pieces[1]);
-				probsOfDocInCate.put(cate, new Double(probsOfDocInCate.containsKey(cate) ? probsOfDocInCate.get(cate)
-						.doubleValue() + prob : prob));
+				probsOfDocInCate.put(cate, probsOfDocInCate.containsKey(cate) ? probsOfDocInCate.get(cate)
+						.doubleValue() + prob : prob);
 			}
 
 			// 同时也需要真实类别
 			if (trueCates == null) {
 				String[] list = elements[1].split(":");
-				trueCates = new ArrayList<String>();
+				trueCates = new ArrayList<>();
 				for (String elem : list) {
 					trueCates.add(elem);
 				}
