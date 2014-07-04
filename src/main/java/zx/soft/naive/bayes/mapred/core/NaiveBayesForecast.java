@@ -12,12 +12,9 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -75,20 +72,18 @@ public class NaiveBayesForecast extends Configured implements Tool {
 		Job joinJob = new Job(conf, "Naive-Bayes-Joined-Forecast-Model");
 		joinJob.setJarByClass(NaiveBayesForecast.class);
 		joinJob.setNumReduceTasks(numReducers);
-		MultipleInputs.addInputPath(joinJob, modelWord, KeyValueTextInputFormat.class, JoinModelWordMapper.class);
-		MultipleInputs.addInputPath(joinJob, forecastData, TextInputFormat.class, JoinForecastMapper.class);
-		joinJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
-		joinJob.setOutputFormatClass(SequenceFileOutputFormat.class);
+		MultipleInputs.addInputPath(joinJob, modelWord, IgnoreEofSequenceFileInputFormat.class,
+				JoinModelWordMapper.class);
+		MultipleInputs.addInputPath(joinJob, forecastData, IgnoreEofSequenceFileInputFormat.class,
+				JoinForecastMapper.class);
 		joinJob.setReducerClass(JoinForecastReducer.class);
-		joinJob.setOutputFormatClass(TextOutputFormat.class);
+		//		joinJob.setOutputFormatClass(TextOutputFormat.class);
+		joinJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		joinJob.setMapOutputKeyClass(Text.class);
 		joinJob.setMapOutputValueClass(Text.class);
 		joinJob.setOutputKeyClass(Text.class);
 		joinJob.setOutputValueClass(Text.class);
 		FileOutputFormat.setOutputPath(joinJob, joined);
-		// 设置输出压缩
-		FileOutputFormat.setCompressOutput(joinJob, true);
-		FileOutputFormat.setOutputCompressorClass(joinJob, GzipCodec.class);
 
 		if (!joinJob.waitForCompletion(true)) {
 			System.err.println("ERROR: Joining failed!");

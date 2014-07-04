@@ -17,5 +17,5 @@
 ```java
 运行脚本：
 
-hadoop jar naive-bayes-jar-with-dependencies.jar dbToHdfsDataProcess -D tableName=sina_user_weibos_1386622641 -D processData=sina_user_weibos_1386622641
+hadoop jar naive-bayes-jar-with-dependencies.jar dbToHdfsDataProcess -D tableName=mysql-tablename -D processData=process-data
 ```

@@ -6,7 +6,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.GzipCodec;
@@ -70,7 +69,7 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 
 		job.setMapOutputKeyClass(LongWritable.class);
 		job.setMapOutputValueClass(DbInputWritable.class);
-		job.setOutputKeyClass(NullWritable.class);
+		job.setOutputKeyClass(LongWritable.class);
 		job.setOutputValueClass(Text.class);
 
 		FileOutputFormat.setOutputPath(job, dstDataPath);
@@ -78,8 +77,8 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 		/**
 		 * 设置输出压缩
 		 */
-		FileOutputFormat.setCompressOutput(job, true);
-		FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
+		//		FileOutputFormat.setCompressOutput(job, true);
+		//		FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
 
 		job.setInputFormatClass(DBInputFormat.class);
 		// 是否可设置多个数据表？

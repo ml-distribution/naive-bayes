@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
@@ -20,7 +19,6 @@ import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 public class TxtToHdfsMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
 
 	private static final AnalyzerTool analyzerTool = new AnalyzerTool();
-	private static InputSplit inputSplit;
 	private static FileSplit fileSplit;
 	private static String fileName;
 	private static String cate;
@@ -30,8 +28,7 @@ public class TxtToHdfsMapper extends Mapper<LongWritable, Text, LongWritable, Te
 	public void map(LongWritable key, Text value, Context context) throws InterruptedException, IOException {
 
 		if (value.toString().length() > 0) {
-			inputSplit = context.getInputSplit();
-			fileSplit = (FileSplit) inputSplit;
+			fileSplit = (FileSplit) context.getInputSplit();
 			fileName = fileSplit.getPath().toUri().toString();
 			cate = fileName.substring(fileName.lastIndexOf("/") + 1);
 			reval = analyzerTool.analyzerTextToStr(value.toString(), " ");

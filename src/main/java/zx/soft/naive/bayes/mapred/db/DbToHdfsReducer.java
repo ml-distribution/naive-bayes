@@ -3,13 +3,12 @@ package zx.soft.naive.bayes.mapred.db;
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 
-public class DbToHdfsReducer extends Reducer<LongWritable, DbInputWritable, NullWritable, Text> {
+public class DbToHdfsReducer extends Reducer<LongWritable, DbInputWritable, LongWritable, Text> {
 
 	private static final AnalyzerTool analyzerTool = new AnalyzerTool();
 
@@ -18,8 +17,7 @@ public class DbToHdfsReducer extends Reducer<LongWritable, DbInputWritable, Null
 			InterruptedException {
 
 		for (DbInputWritable value : values) {
-			context.write(NullWritable.get(),
-					new Text(value.getWid() + " " + analyzerTool.analyzerTextToStr(value.getText(), " ")));
+			context.write(key, new Text(value.getWid() + " " + analyzerTool.analyzerTextToStr(value.getText(), " ")));
 		}
 
 	}

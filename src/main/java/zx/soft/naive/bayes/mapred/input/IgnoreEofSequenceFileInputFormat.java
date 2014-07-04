@@ -12,9 +12,6 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
  * 该类会忽略该异常
  * 
  * @author wanggang
- *
- * @param <K>
- * @param <V>
  */
 public class IgnoreEofSequenceFileInputFormat<K, V> extends SequenceFileInputFormat<K, V> {
 
