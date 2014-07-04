@@ -1,0 +1,47 @@
+package zx.soft.naive.bayes.driver;
+
+import org.apache.hadoop.util.ProgramDriver;
+
+import zx.soft.naive.bayes.mapred.NaiveBayesDistribute;
+import zx.soft.naive.bayes.mapred.core.NaiveBayesForecast;
+import zx.soft.naive.bayes.mapred.core.NavieBayesTraining;
+import zx.soft.naive.bayes.mapred.db.DbToHdfsDataProcess;
+import zx.soft.naive.bayes.mapred.db.HdfsToDBProcess;
+import zx.soft.naive.bayes.mapred.txt.TxtToHdfsDataProcess;
+import zx.soft.naive.bayes.simple.NaiveBayesSimple;
+
+/**
+ * 驱动类
+ * 
+ * @author wanggang
+ *
+ */
+public class NaiveBayesDriver {
+
+	/**
+	 * 主函数
+	 */
+	public static void main(String[] args) {
+
+		int exitCode = -1;
+		ProgramDriver pgd = new ProgramDriver();
+		try {
+			pgd.addClass("naiveBayesSimple", NaiveBayesSimple.class, "简单Naive-Bayes实现");
+			pgd.addClass("txtToHdfsDataProcess", TxtToHdfsDataProcess.class, "Txt数据处理，并存储到HDFS中");
+			pgd.addClass("dbToHdfsDataProcess", DbToHdfsDataProcess.class, "DB数据处理，并存储到HDFS中");
+			pgd.addClass("naiveBayesDistribute", NaiveBayesDistribute.class, "分布式Naive-Bayes实现");
+			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Naive-Bayes计算的结果从HDFS中导入到DB中");
+			pgd.addClass("naiveBayesTraining", NavieBayesTraining.class, "Navive-Bayes模型训练");
+			pgd.addClass("naiveBayesForecast", NaiveBayesForecast.class, "Naive-Bayes分类预测");
+			pgd.driver(args);
+			// Success
+			exitCode = 0;
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+
+		System.exit(exitCode);
+
+	}
+
+}

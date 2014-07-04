@@ -32,7 +32,7 @@
     cate2,cate3  测试 数据 集合
     
 运行主作业:
-    hadoop jar NavieBayesDriver.jar navieBayesDistribute -D train=/path/to/training/data -D test=/path/to/test/data -D output=/output/dir [-D reducers=10]
+    hadoop jar NaiveBayesDriver.jar naiveBayesDistribute -D train=/path/to/training/data -D test=/path/to/test/data -D output=/output/dir [-D reducers=10]
 ```
     
 ## 情感分析
