@@ -19,13 +19,20 @@ public class ForecastMapper extends Mapper<Text, Text, LongWritable, Text> {
 	public void map(Text key, Text value, Context context) throws InterruptedException, IOException {
 
 		String[] elements = value.toString().split("::");
+		/*
+		 * 对于当前词语不在训练模型中的情况，不做处理
+		 */
+		if (elements[0].length() == 0) {
+			return;
+		}
+
 		// 该词语（key）在每个类别中出现的概率：cate1:0.0003 cate2:0.00004::docId-i::docId-j
 		String wordProbOfCates = elements[0];
 
 		// 该词语的cate:prob对
 		HashMap<String, Double> wordProbInCates = null;
 		if (wordProbOfCates.length() > 0) {
-			String[] cateProbs = wordProbOfCates.split(" ");
+			String[] cateProbs = wordProbOfCates.split(",");
 			wordProbInCates = new HashMap<>();
 			for (String cateCount : cateProbs) {
 				String[] elems = cateCount.split(":");

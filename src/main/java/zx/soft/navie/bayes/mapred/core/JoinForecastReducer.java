@@ -35,9 +35,10 @@ public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 			}
 		}
 
-		// 有可能存在，某些词语不在训练模型中，赋值为空
+		// 有可能存在，某些词语不在训练模型中，赋值为空或者丢弃
 		if (modelLine == null) {
-			modelLine = "";
+			//			modelLine = "";
+			return;
 		}
 		StringBuilder output = null;
 		if (docIds.size() > 0) {
@@ -45,6 +46,7 @@ public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 			output.append(String.format("%s::", modelLine));
 			for (String doc : docIds) {
 				output.append(String.format("%s::", doc));
+				// 防止内存泄漏
 				if (output.toString().length() > LIMIT_LENGTH) {
 					context.write(key, new Text(output.toString().substring(0, output.toString().length() - 2)));
 					output = new StringBuilder();
