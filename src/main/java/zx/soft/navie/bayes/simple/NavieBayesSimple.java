@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import zx.soft.navie.bayes.analyzer.AnalyzerTool;
+import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 import zx.soft.navie.bayes.data.TextTrainDataFactory;
 import zx.soft.navie.bayes.data.TrainDataFactory;
 

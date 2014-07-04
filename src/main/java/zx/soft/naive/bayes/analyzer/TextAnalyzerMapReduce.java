@@ -1,4 +1,4 @@
-package zx.soft.navie.bayes.analyzer;
+package zx.soft.naive.bayes.analyzer;
 
 import java.io.IOException;
 

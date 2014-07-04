@@ -8,7 +8,7 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
-import zx.soft.navie.bayes.analyzer.AnalyzerTool;
+import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 
 /**
  * 输出格式如下: catei wordi wordj wordk

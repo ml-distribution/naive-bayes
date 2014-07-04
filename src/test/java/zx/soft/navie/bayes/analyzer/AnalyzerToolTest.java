@@ -9,6 +9,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import zx.soft.naive.bayes.analyzer.AnalyzerTool;
+
 //@FixMethodOrder(MethodSorters.DEFAULT)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AnalyzerToolTest {

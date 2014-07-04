@@ -7,7 +7,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import zx.soft.navie.bayes.analyzer.AnalyzerTool;
+import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 
 public class DbToHdfsReducer extends Reducer<LongWritable, DbInputWritable, NullWritable, Text> {
 
