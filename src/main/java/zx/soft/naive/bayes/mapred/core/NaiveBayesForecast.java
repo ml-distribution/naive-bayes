@@ -16,10 +16,12 @@ import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import zx.soft.naive.bayes.mapred.input.IgnoreEofSequenceFileInputFormat;
 import zx.soft.naive.bayes.utils.HDFSUtils;
 
 /**
@@ -75,6 +77,8 @@ public class NaiveBayesForecast extends Configured implements Tool {
 		joinJob.setNumReduceTasks(numReducers);
 		MultipleInputs.addInputPath(joinJob, modelWord, KeyValueTextInputFormat.class, JoinModelWordMapper.class);
 		MultipleInputs.addInputPath(joinJob, forecastData, TextInputFormat.class, JoinForecastMapper.class);
+		joinJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		joinJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		joinJob.setReducerClass(JoinForecastReducer.class);
 		joinJob.setOutputFormatClass(TextOutputFormat.class);
 		joinJob.setMapOutputKeyClass(Text.class);
@@ -99,8 +103,10 @@ public class NaiveBayesForecast extends Configured implements Tool {
 		classifyJob.setNumReduceTasks(numReducers);
 		classifyJob.setMapperClass(ForecastMapper.class);
 		classifyJob.setReducerClass(ForecastReducer.class);
-		classifyJob.setInputFormatClass(KeyValueTextInputFormat.class);
-		classifyJob.setOutputFormatClass(TextOutputFormat.class);
+		//		classifyJob.setInputFormatClass(KeyValueTextInputFormat.class);
+		//		classifyJob.setOutputFormatClass(TextOutputFormat.class);
+		classifyJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		classifyJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		classifyJob.setMapOutputKeyClass(LongWritable.class);
 		classifyJob.setMapOutputValueClass(Text.class);
 		classifyJob.setOutputKeyClass(LongWritable.class);
@@ -108,8 +114,8 @@ public class NaiveBayesForecast extends Configured implements Tool {
 		FileInputFormat.addInputPath(classifyJob, joined);
 		FileOutputFormat.setOutputPath(classifyJob, output);
 		// 设置输出压缩
-		FileOutputFormat.setCompressOutput(classifyJob, true);
-		FileOutputFormat.setOutputCompressorClass(classifyJob, GzipCodec.class);
+		//		FileOutputFormat.setCompressOutput(classifyJob, true);
+		//		FileOutputFormat.setOutputCompressorClass(classifyJob, GzipCodec.class);
 
 		if (!classifyJob.waitForCompletion(true)) {
 			System.err.println("ERROR: Classification failed!");

@@ -9,17 +9,18 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import zx.soft.naive.bayes.mapred.input.IgnoreEofSequenceFileInputFormat;
 import zx.soft.naive.bayes.utils.HDFSUtils;
 
 /**
@@ -40,6 +41,10 @@ public class NavieBayesTraining extends Configured implements Tool {
 
 		Configuration conf = getConf();
 		Configuration modelConf = new Configuration();
+		conf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
+		conf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
+		modelConf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
+		modelConf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
 		// 配置reducer个数，可选
 		int numReducers = conf.getInt("reducers", 20);
 		// 获取训练数据路径和输出的模型路径
@@ -66,8 +71,10 @@ public class NavieBayesTraining extends Configured implements Tool {
 		trainWordJob.setNumReduceTasks(numReducers / 2);
 		trainWordJob.setMapperClass(TrainWordMapper.class);
 		trainWordJob.setReducerClass(TrainWordReducer.class);
-		trainWordJob.setInputFormatClass(TextInputFormat.class);
-		trainWordJob.setOutputFormatClass(TextOutputFormat.class);
+		//		trainWordJob.setInputFormatClass(TextInputFormat.class);
+		//		trainWordJob.setOutputFormatClass(TextOutputFormat.class);
+		trainWordJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		trainWordJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		trainWordJob.setMapOutputKeyClass(Text.class);
 		trainWordJob.setMapOutputValueClass(Text.class);
 		trainWordJob.setOutputKeyClass(Text.class);
@@ -93,8 +100,10 @@ public class NavieBayesTraining extends Configured implements Tool {
 		trainCateJob.setNumReduceTasks(1);
 		trainCateJob.setMapperClass(TrainCateMapper.class);
 		trainCateJob.setReducerClass(TrainCateReducer.class);
-		trainCateJob.setInputFormatClass(TextInputFormat.class);
-		trainCateJob.setOutputFormatClass(TextOutputFormat.class);
+		//		trainCateJob.setInputFormatClass(TextInputFormat.class);
+		//		trainCateJob.setOutputFormatClass(TextOutputFormat.class);
+		trainCateJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		trainCateJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		trainCateJob.setMapOutputKeyClass(Text.class);
 		trainCateJob.setMapOutputValueClass(IntWritable.class);
 		trainCateJob.setOutputKeyClass(Text.class);
@@ -127,8 +136,10 @@ public class NavieBayesTraining extends Configured implements Tool {
 		modelCateJob.setNumReduceTasks(1);
 		modelCateJob.setMapperClass(ModelCateMapper.class);
 		modelCateJob.setReducerClass(ModelCateReducer.class);
-		modelCateJob.setInputFormatClass(KeyValueTextInputFormat.class);
-		modelCateJob.setOutputFormatClass(TextOutputFormat.class);
+		//		modelCateJob.setInputFormatClass(KeyValueTextInputFormat.class);
+		//		modelCateJob.setOutputFormatClass(TextOutputFormat.class);
+		modelCateJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		modelCateJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		modelCateJob.setMapOutputKeyClass(Text.class);
 		modelCateJob.setMapOutputValueClass(Text.class);
 		modelCateJob.setOutputKeyClass(Text.class);
@@ -149,8 +160,10 @@ public class NavieBayesTraining extends Configured implements Tool {
 		modelWordJob.setNumReduceTasks(numReducers);
 		modelWordJob.setMapperClass(ModelWordMapper.class);
 		modelWordJob.setReducerClass(ModelWordReducer.class);
-		modelWordJob.setInputFormatClass(KeyValueTextInputFormat.class);
-		modelWordJob.setOutputFormatClass(TextOutputFormat.class);
+		//		modelWordJob.setInputFormatClass(KeyValueTextInputFormat.class);
+		//		modelWordJob.setOutputFormatClass(TextOutputFormat.class);
+		modelWordJob.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		modelWordJob.setOutputFormatClass(SequenceFileOutputFormat.class);
 		modelWordJob.setMapOutputKeyClass(Text.class);
 		modelWordJob.setMapOutputValueClass(Text.class);
 		modelWordJob.setOutputKeyClass(Text.class);
