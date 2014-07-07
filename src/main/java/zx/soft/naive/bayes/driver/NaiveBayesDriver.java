@@ -9,6 +9,7 @@ import zx.soft.naive.bayes.mapred.db.DbToHdfsDataProcess;
 import zx.soft.naive.bayes.mapred.db.HdfsToDBProcess;
 import zx.soft.naive.bayes.mapred.txt.TxtToHdfsDataProcess;
 import zx.soft.naive.bayes.simple.NaiveBayesSimple;
+import zx.soft.naive.bayes.web.NaiveBayesServer;
 
 /**
  * 驱动类
@@ -31,8 +32,9 @@ public class NaiveBayesDriver {
 			pgd.addClass("dbToHdfsDataProcess", DbToHdfsDataProcess.class, "DB数据处理，并存储到HDFS中");
 			pgd.addClass("naiveBayesDistribute", NaiveBayesDistribute.class, "分布式Naive-Bayes实现");
 			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Naive-Bayes计算的结果从HDFS中导入到DB中");
-			pgd.addClass("naiveBayesTraining", NavieBayesTraining.class, "Navive-Bayes模型训练");
+			pgd.addClass("naiveBayesTraining", NavieBayesTraining.class, "Naivve-Bayes模型训练");
 			pgd.addClass("naiveBayesForecast", NaiveBayesForecast.class, "Naive-Bayes分类预测");
+			pgd.addClass("naiveBayesServer", NaiveBayesServer.class, "Naive-Bayes分类的Web服务接口");
 			pgd.driver(args);
 			// Success
 			exitCode = 0;
