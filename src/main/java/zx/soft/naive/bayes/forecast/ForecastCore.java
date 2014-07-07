@@ -1,7 +1,7 @@
 package zx.soft.naive.bayes.forecast;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,26 +23,42 @@ public class ForecastCore {
 	private final AnalyzerTool analyzerTool;
 
 	public ForecastCore() {
+		logger.info("加载训练模型数据......");
 		trainModel = new TrainModel();
+		logger.info("加载分词器......");
 		analyzerTool = new AnalyzerTool();
 	}
 
+	/**
+	 * 测试函数
+	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+
+		ForecastCore forecastCore = new ForecastCore();
+		System.out.println(forecastCore.classify("悲伤的一天"));
+		forecastCore.close();
 
 	}
 
-	private HashMap<String, Integer> getWordAndCounts(String text) {
-		HashMap<String, Integer> result = new HashMap<>();
-		List<String> words = analyzerTool.analyzerTextToList(text);
-		for (String word : words) {
-			if (result.get(word) == null) {
-				result.put(word, 1);
-			} else {
-				result.put(word, result.get(word) + 1);
+	/**
+	 * 对文本进行分类
+	 */
+	public String classify(String text) {
+		HashMap<String, Integer> wordAndCounts = analyzerTool.getWordAndCounts(text);
+		double bestProb = Double.NEGATIVE_INFINITY;
+		String bestCate = null;
+		double totalProb;
+		for (String cate : trainModel.getCates()) {
+			totalProb = trainModel.getCatePirorProb(cate);
+			for (Entry<String, Integer> wordAndCount : wordAndCounts.entrySet()) {
+				totalProb += wordAndCount.getValue() * trainModel.getWordInCateProb(wordAndCount.getKey(), cate);
+			}
+			if (totalProb > bestProb) {
+				bestCate = cate;
+				bestProb = totalProb;
 			}
 		}
-		return result;
+		return bestCate;
 	}
 
 	public void close() {

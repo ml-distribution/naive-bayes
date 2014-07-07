@@ -79,7 +79,12 @@ public class TrainModel {
 	 * word在cate下出现的概率
 	 */
 	public double getWordInCateProb(String word, String cate) {
-		return wordInCateProbs.get(word).get(cate);
+		try {
+			return wordInCateProbs.get(word).get(cate);
+		} catch (NullPointerException e) {
+			logger.error("Word=" + word + " in cate=" + cate + " has no prob.");
+			return 0.0;
+		}
 	}
 
 	/**
