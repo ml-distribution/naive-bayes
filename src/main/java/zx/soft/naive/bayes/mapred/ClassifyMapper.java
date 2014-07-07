@@ -15,8 +15,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import zx.soft.naive.bayes.mapred.core.NaiveBayesConstant;
-
 /**
  * 计算每个类别下的每个词的概率
  * 

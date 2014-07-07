@@ -29,8 +29,8 @@ public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWri
 
 	@Override
 	protected void setup(Context context) throws IOException {
-		totalSamples = context.getConfiguration().getLong(NaiveBayesDistribute.TOTAL_SAMPLES, 100);
-		uniqueCates = context.getConfiguration().getLong(NaiveBayesDistribute.UNIQUE_CATES, 100);
+		totalSamples = context.getConfiguration().getLong(NaiveBayesConstant.TOTAL_SAMPLES, 100);
+		uniqueCates = context.getConfiguration().getLong(NaiveBayesConstant.UNIQUE_CATES, 100);
 		docsWithCate = new HashMap<>();
 
 		// 在DistributedCache中建立HashMap存放类别数据
@@ -78,8 +78,8 @@ public class ClassifyForecastReducer extends Reducer<LongWritable, Text, LongWri
 		double bestProb = Double.NEGATIVE_INFINITY;
 		String bestLabel = null;
 		for (String label : probabilities.keySet()) {
-			double prior = Math.log(docsWithCate.get(label).intValue() + NaiveBayesDistribute.ALPHA)
-					- Math.log(totalSamples + (NaiveBayesDistribute.ALPHA * uniqueCates));
+			double prior = Math.log(docsWithCate.get(label).intValue() + NaiveBayesConstant.ALPHA)
+					- Math.log(totalSamples + (NaiveBayesConstant.ALPHA * uniqueCates));
 			double totalProb = probabilities.get(label).doubleValue() + prior;
 			if (totalProb > bestProb) {
 				bestLabel = label;

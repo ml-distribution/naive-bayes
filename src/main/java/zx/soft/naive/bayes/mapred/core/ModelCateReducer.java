@@ -6,7 +6,7 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import zx.soft.naive.bayes.mapred.NaiveBayesDistribute;
+import zx.soft.naive.bayes.mapred.NaiveBayesConstant;
 
 /**
  * 计算每个类别出现的先验概率
@@ -33,8 +33,8 @@ public class ModelCateReducer extends Reducer<Text, Text, Text, DoubleWritable> 
 			// 该类别下的文档总数
 			int docsCount = Integer.parseInt(elems[0]);
 			// cate下的文档总数/(样本总数+类别总数)，可以在训练模型中计算出来
-			double prior = Math.log(docsCount + NaiveBayesDistribute.ALPHA)
-					- Math.log(totalSamples + (NaiveBayesDistribute.ALPHA * uniqueCates));
+			double prior = Math.log(docsCount + NaiveBayesConstant.ALPHA)
+					- Math.log(totalSamples + (NaiveBayesConstant.ALPHA * uniqueCates));
 			context.write(key, new DoubleWritable(prior));
 		}
 	}
