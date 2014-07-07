@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -47,6 +48,13 @@ public class TrainModel {
 	 */
 	public double getCatePirorProb(String cate) {
 		return catePirorProbs.get(cate);
+	}
+
+	/**
+	 * 返回类别信息
+	 */
+	public Set<String> getCates() {
+		return catePirorProbs.keySet();
 	}
 
 	/**

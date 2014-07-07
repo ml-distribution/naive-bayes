@@ -3,6 +3,7 @@ package zx.soft.naive.bayes.analyzer;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -28,6 +29,19 @@ public class AnalyzerTool {
 
 	public AnalyzerTool() {
 		analyzer = new IKAnalyzer(Version.LUCENE_48, true);
+	}
+
+	public HashMap<String, Integer> getWordAndCounts(String text) {
+		HashMap<String, Integer> result = new HashMap<>();
+		List<String> words = analyzerTextToList(text);
+		for (String word : words) {
+			if (result.get(word) == null) {
+				result.put(word, 1);
+			} else {
+				result.put(word, result.get(word) + 1);
+			}
+		}
+		return result;
 	}
 
 	/**

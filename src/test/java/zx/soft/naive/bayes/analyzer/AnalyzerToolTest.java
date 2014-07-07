@@ -1,15 +1,16 @@
 package zx.soft.naive.bayes.analyzer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 
 //@FixMethodOrder(MethodSorters.DEFAULT)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -44,6 +45,12 @@ public class AnalyzerToolTest {
 	@Test
 	public void testAnalyzerTextArr_分词结果转换成数组() {
 		assertTrue(analyzerTool.analyzerTextToArr("我去年买了个表").length > 0);
+	}
+
+	@Test
+	public void testAnalyzerMap() {
+		HashMap<String, Integer> result = analyzerTool.getWordAndCounts("测试测试的数据，统计测试的数据分词结果");
+		assertEquals("{数据=2, 测试=3, 统计=1, 分词=1}", result.toString());
 	}
 
 }
