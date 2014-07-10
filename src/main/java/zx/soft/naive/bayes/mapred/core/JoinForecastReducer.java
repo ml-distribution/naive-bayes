@@ -22,13 +22,13 @@ public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 	@Override
 	public void reduce(Text key, Iterable<Text> values, Context context) throws InterruptedException, IOException {
 
-		String modelLine = null;
+		String modelWord = null;
 		ArrayList<String> docIds = new ArrayList<>();
 		for (Text value : values) {
 			String line = value.toString();
 			if (line.contains(":")) {
 				// 构建好的训练模型数据
-				modelLine = line;
+				modelWord = line;
 			} else {
 				// 包含"文档ID"的预测数据
 				docIds.add(line);
@@ -36,21 +36,21 @@ public class JoinForecastReducer extends Reducer<Text, Text, Text, Text> {
 		}
 
 		// 有可能存在，某些词语不在训练模型中，赋值为空或者丢弃
-		if (modelLine == null) {
+		if (modelWord == null) {
 			//			modelLine = "";
 			return;
 		}
 		StringBuilder output = null;
 		if (docIds.size() > 0) {
 			output = new StringBuilder();
-			output.append(String.format("%s::", modelLine));
+			output.append(String.format("%s::", modelWord));
 			for (String doc : docIds) {
 				output.append(String.format("%s::", doc));
 				// 防止内存泄漏
 				if (output.toString().length() > LIMIT_LENGTH) {
 					context.write(key, new Text(output.toString().substring(0, output.toString().length() - 2)));
 					output = new StringBuilder();
-					output.append(String.format("%s::", modelLine));
+					output.append(String.format("%s::", modelWord));
 				}
 			}
 			context.write(key, new Text(output.toString().substring(0, output.toString().length() - 2)));
