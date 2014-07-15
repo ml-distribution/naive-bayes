@@ -94,7 +94,7 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 			// cate下的文档总数/(样本总数+类别总数)，可以在训练模型中计算出来
 			double prior = Math.log(docsCountPerCate.get(cate).intValue() + NaiveBayesConstant.ALPHA)
 					- Math.log(totalSamples + (NaiveBayesConstant.ALPHA * uniqueCates));
-			double totalProb = probsOfDocInCate.get(cate).doubleValue() + prior;
+			double totalProb = probsOfDocInCate.get(cate) + prior;
 			if (totalProb > bestProb) {
 				bestCate = cate;
 				bestProb = totalProb;
