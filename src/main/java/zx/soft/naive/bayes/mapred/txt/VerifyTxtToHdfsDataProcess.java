@@ -9,6 +9,7 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -16,14 +17,14 @@ import org.apache.hadoop.util.ToolRunner;
 
 import zx.soft.naive.bayes.utils.HDFSUtils;
 
-public class TxtToHdfsDataProcess extends Configured implements Tool {
+public class VerifyTxtToHdfsDataProcess extends Configured implements Tool {
 
 	/**
 	 * 主函数
 	 */
 	public static void main(String[] args) {
 		try {
-			int exitCode = ToolRunner.run(new TxtToHdfsDataProcess(), args);
+			int exitCode = ToolRunner.run(new VerifyTxtToHdfsDataProcess(), args);
 			System.exit(exitCode);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -46,12 +47,13 @@ public class TxtToHdfsDataProcess extends Configured implements Tool {
 
 		HDFSUtils.delete(conf, dstDataPath);
 
-		Job job = new Job(conf, "Naive-Bayes-Txt-DataProcess");
-		job.setJarByClass(TxtToHdfsDataProcess.class);
+		Job job = new Job(conf, "Naive-Bayes-Verify-Txt-DataProcess");
+		job.setJarByClass(VerifyTxtToHdfsDataProcess.class);
 		job.setMapperClass(TxtToHdfsMapper.class);
 		job.setReducerClass(TxtToHdfsReducer.class);
 		// 输入的文件不是序列化文件，所以不需要设置
 		//		job.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
+		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 		job.setNumReduceTasks(numReduceTasks);
 
@@ -69,7 +71,7 @@ public class TxtToHdfsDataProcess extends Configured implements Tool {
 		FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
 
 		if (!job.waitForCompletion(true)) {
-			System.err.println("ERROR: TxtToHdfsDataProcess failed!");
+			System.err.println("ERROR: VarifyTxtToHdfsDataProcess failed!");
 			return 1;
 		}
 		return 0;
