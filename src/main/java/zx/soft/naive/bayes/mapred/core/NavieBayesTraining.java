@@ -22,6 +22,11 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import zx.soft.naive.bayes.mapred.NaiveBayesConstant;
+import zx.soft.naive.bayes.mapred.TrainCateMapper;
+import zx.soft.naive.bayes.mapred.TrainCateReducer;
+import zx.soft.naive.bayes.mapred.TrainWordMapper;
+import zx.soft.naive.bayes.mapred.TrainWordReducer;
 import zx.soft.naive.bayes.mapred.input.IgnoreEofSequenceFileInputFormat;
 import zx.soft.naive.bayes.utils.HDFSUtils;
 

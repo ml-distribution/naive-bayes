@@ -1,4 +1,4 @@
-package zx.soft.naive.bayes.mapred.core;
+package zx.soft.naive.bayes.mapred;
 
 /**
  * Navie Bayes用到的常量
@@ -10,7 +10,7 @@ public class NaiveBayesConstant {
 
 	public static final double ALPHA = 1.0;
 
-	static enum NB_COUNTERS {
+	public static enum NB_COUNTERS {
 		TOTAL_SAMPLES, UNIQUE_WORDS, UNIQUE_CATES
 	}
 

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,12 @@ public class TextTrainDataFactory implements TrainDataFactory {
 			logger.error("IOException in getText: " + e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public Set<String> getWords() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

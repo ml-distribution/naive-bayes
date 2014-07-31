@@ -14,6 +14,8 @@ import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import zx.soft.naive.bayes.mapred.NaiveBayesConstant;
+
 /**
  * 计算每个词语在所有类别下面的概率。
  * 

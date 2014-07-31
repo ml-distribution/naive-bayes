@@ -7,6 +7,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import zx.soft.naive.bayes.mapred.TrainsVector;
+
 /**
  * 预测数据用于分类，输出格式：word——>文档ID
  * 

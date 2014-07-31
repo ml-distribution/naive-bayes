@@ -1,5 +1,7 @@
 package zx.soft.naive.bayes.data;
 
+import java.util.Set;
+
 /**
  * 训练集工厂接口
  * 
@@ -14,6 +16,11 @@ public interface TrainDataFactory {
 	public String[] getCates();
 
 	public void setCates(String[] cates);
+
+	/**
+	 * 获取所有词语列表
+	 */
+	public Set<String> getWords();
 
 	/**
 	 * 当前类别下的样本数量

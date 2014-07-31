@@ -17,7 +17,6 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import zx.soft.naive.bayes.mapred.input.IgnoreEofSequenceFileInputFormat;
 import zx.soft.naive.bayes.utils.ConfigUtil;
 import zx.soft.naive.bayes.utils.HDFSUtils;
 
@@ -63,8 +62,6 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 		job.setJarByClass(DbToHdfsDataProcess.class);
 		job.setMapperClass(DbToHdfsMapper.class);
 		job.setReducerClass(DbToHdfsReducer.class);
-		job.setInputFormatClass(IgnoreEofSequenceFileInputFormat.class);
-		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 		job.setNumReduceTasks(numReduceTasks);
 
 		job.setMapOutputKeyClass(LongWritable.class);
@@ -85,6 +82,7 @@ public class DbToHdfsDataProcess extends Configured implements Tool {
 		DBInputFormat.setInput(job, DbInputWritable.class, tablename, //input table name
 				null, null, new String[] { "wid", "text" } // table columns
 				);
+		job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
 		if (!job.waitForCompletion(true)) {
 			System.err.println("ERROR: DbToHdfsDataProcess failed!");

@@ -62,8 +62,8 @@ public class NaiveBayesTrain extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(NaiveBayesDistribute.UNIQUE_WORDS,
-				trainWordJob.getCounters().findCounter(NaiveBayesDistribute.NB_COUNTERS.UNIQUE_WORDS).getValue());
+		classifyConf.setLong(NaiveBayesConstant.UNIQUE_WORDS,
+				trainWordJob.getCounters().findCounter(NaiveBayesConstant.NB_COUNTERS.UNIQUE_WORDS).getValue());
 
 		// Job 1b: 按照类别进行统计计算
 		HDFSUtils.delete(conf, distCache);
@@ -89,10 +89,10 @@ public class NaiveBayesTrain extends Configured implements Tool {
 			return 1;
 		}
 
-		classifyConf.setLong(NaiveBayesDistribute.UNIQUE_CATES,
-				trainCateJob.getCounters().findCounter(NaiveBayesDistribute.NB_COUNTERS.UNIQUE_CATES).getValue());
-		classifyConf.setLong(NaiveBayesDistribute.TOTAL_SAMPLES,
-				trainCateJob.getCounters().findCounter(NaiveBayesDistribute.NB_COUNTERS.TOTAL_SAMPLES).getValue());
+		classifyConf.setLong(NaiveBayesConstant.UNIQUE_CATES,
+				trainCateJob.getCounters().findCounter(NaiveBayesConstant.NB_COUNTERS.UNIQUE_CATES).getValue());
+		classifyConf.setLong(NaiveBayesConstant.TOTAL_SAMPLES,
+				trainCateJob.getCounters().findCounter(NaiveBayesConstant.NB_COUNTERS.TOTAL_SAMPLES).getValue());
 
 		return 0;
 	}

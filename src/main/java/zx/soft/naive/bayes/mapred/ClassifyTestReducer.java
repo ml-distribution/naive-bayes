@@ -17,8 +17,6 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import zx.soft.naive.bayes.mapred.core.NaiveBayesConstant;
-
 /**
  * 计算每个文档的累加的log(prob(word|cate))概率和
  * 
@@ -94,9 +92,9 @@ public class ClassifyTestReducer extends Reducer<LongWritable, Text, LongWritabl
 		String bestCate = null;
 		for (String cate : probsOfDocInCate.keySet()) {
 			// cate下的文档总数/(样本总数+类别总数)，可以在训练模型中计算出来
-			double prior = Math.log(docsCountPerCate.get(cate).intValue() + NaiveBayesDistribute.ALPHA)
-					- Math.log(totalSamples + (NaiveBayesDistribute.ALPHA * uniqueCates));
-			double totalProb = probsOfDocInCate.get(cate).doubleValue() + prior;
+			double prior = Math.log(docsCountPerCate.get(cate).intValue() + NaiveBayesConstant.ALPHA)
+					- Math.log(totalSamples + (NaiveBayesConstant.ALPHA * uniqueCates));
+			double totalProb = probsOfDocInCate.get(cate) + prior;
 			if (totalProb > bestProb) {
 				bestCate = cate;
 				bestProb = totalProb;

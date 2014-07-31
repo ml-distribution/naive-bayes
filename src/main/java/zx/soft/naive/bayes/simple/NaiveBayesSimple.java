@@ -25,9 +25,13 @@ public class NaiveBayesSimple {
 	private final AnalyzerTool analyzerTool;
 	private final TrainDataFactory trainDataFactory;
 
+	private static HashMap<String, Double> catePirorProbs;
+
 	public NaiveBayesSimple(TrainDataFactory trainDataFactory) {
 		this.analyzerTool = new AnalyzerTool();
 		this.trainDataFactory = trainDataFactory;
+		// 初始化类别先验概率
+		initCatePirorProbs();
 	}
 
 	/**
@@ -111,13 +115,21 @@ public class NaiveBayesSimple {
 		for (String word : words) {
 			probability *= calcuteProbabilityOfWordInCate(cate, word);
 		}
-		// 当前分类的训练文本数目
-		double numOfSampleInCate = trainDataFactory.numOfSampleInCate(cate);
-		// 全部文本数目
-		double totalNumOfSample = trainDataFactory.totalNumOfSample();
 		// 再乘以先验概率(全部文本数目比上当前类别的文本数目)
-		probability *= numOfSampleInCate / totalNumOfSample;
+		probability *= catePirorProbs.get(cate);
 		return probability;
+	}
+
+	private void initCatePirorProbs() {
+		catePirorProbs = new HashMap<>();
+		for (String cate : trainDataFactory.getCates()) {
+			// 当前分类的训练文本数目
+			double numOfSampleInCate = trainDataFactory.numOfSampleInCate(cate);
+			// 全部文本数目
+			double totalNumOfSample = trainDataFactory.totalNumOfSample();
+			// 先验概率(全部文本数目比上当前类别的文本数目)
+			catePirorProbs.put(cate, numOfSampleInCate / totalNumOfSample);
+		}
 	}
 
 }

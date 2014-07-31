@@ -20,13 +20,13 @@ public class TrainCateReducer extends Reducer<Text, IntWritable, Text, Text> {
 			IOException {
 
 		// 统计类别个数
-		context.getCounter(NaiveBayesDistribute.NB_COUNTERS.UNIQUE_CATES).increment(1);
+		context.getCounter(NaiveBayesConstant.NB_COUNTERS.UNIQUE_CATES).increment(1);
 
 		long pY = 0;
 		long pYW = 0;
 		for (IntWritable value : values) {
 			// 统计全部的样本数，如果每个文档是单个类别的话，文档数和样本数一样，否则样本数大于文档数，实际则以样本数为准
-			context.getCounter(NaiveBayesDistribute.NB_COUNTERS.TOTAL_SAMPLES).increment(1);
+			context.getCounter(NaiveBayesConstant.NB_COUNTERS.TOTAL_SAMPLES).increment(1);
 			// 统计类别为key的文档数
 			pY++;
 			// 统计类别为key的所有文档下的词量总数
