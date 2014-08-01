@@ -51,6 +51,27 @@
 		</dependency>
 		<dependency>
 			<groupId>cc.pp.study</groupId>
+			<artifactId>analyzer-mmseg4j</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.restlet.jee</groupId>
+					<artifactId>org.restlet</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.restlet.jee</groupId>
+					<artifactId>org.restlet.ext.servlet</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<dependency>
+			<groupId>cc.pp.study</groupId>
 			<artifactId>analyzer-ik</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<exclusions>

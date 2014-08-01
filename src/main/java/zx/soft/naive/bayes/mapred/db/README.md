@@ -19,3 +19,40 @@
 
 hadoop jar naive-bayes-jar-with-dependencies.jar dbToHdfsDataProcess -D tableName=mysql-tablename -D processData=process-data
 ```
+
+从DB中单张表读数据进行分词：
+======
+
+```java
+运行脚本：
+
+hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename -D processData=process-words
+```
+
+输出：
+鼓乐喧天        5
+鼓乐声  6
+鼓室    3
+鼓掌欢迎        13
+
+
+将多张表分词后结果合并：
+======
+
+```java
+运行脚本：
+
+hadoop jar naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData=process-words -D dstData=all-words
+```
+
+输出：
+不告而辞        2
+不周    1202
+不回    37425
+不在乎  54829
+不在家  14280
+不在意  11513
+不在此列        128
+
+
+
