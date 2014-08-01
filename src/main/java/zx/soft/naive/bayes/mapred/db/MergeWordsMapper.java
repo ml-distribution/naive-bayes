@@ -9,12 +9,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 import zx.soft.naive.bayes.analyzer.AnalyzerTool;
 
-/**
- * 输出格式如下: catei wordi wordj wordk
- * 
- * @author wanggang
- *
- */
 
 public class MergeWordsMapper extends Mapper<Text, LongWritable,  Text, LongWritable> {
 

@@ -1,11 +1,8 @@
 package zx.soft.naive.bayes.mapred.db;
 
-import java.io.File;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -17,10 +14,15 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.http.client.params.AllClientPNames;
 
 import zx.soft.naive.bayes.mapred.input.IgnoreEofSequenceFileInputFormat;
 import zx.soft.naive.bayes.utils.HDFSUtils;
+
+/**
+ * 对DbToWordsProcesss输出的多个分词目录进行合并，对词语出现的频数进行累加
+ * @author frank
+ *
+ */
 
 public class MergeWordsProcess extends Configured implements Tool {
 

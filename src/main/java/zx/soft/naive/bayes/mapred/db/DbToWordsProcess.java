@@ -20,6 +20,19 @@ import org.apache.hadoop.util.ToolRunner;
 import zx.soft.naive.bayes.utils.ConfigUtil;
 import zx.soft.naive.bayes.utils.HDFSUtils;
 
+/**
+ * 将数据库内单张微博数据表进行分词
+ * 
+ * 输入：为什么总是受伤啊！！！！[可怜]
+ * 输出：
+ * 为什么 1
+ * 总是 1
+ * 受伤 1
+ * 可怜 1
+ * 
+ * @author frank
+ *
+ */
 public class DbToWordsProcess extends Configured implements Tool {
 
 	/**
