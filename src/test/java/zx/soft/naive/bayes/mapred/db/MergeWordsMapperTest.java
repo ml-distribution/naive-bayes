@@ -3,14 +3,14 @@ package zx.soft.naive.bayes.mapred.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MergeWordsMapperTest {
-	private ReduceDriver<Text, LongWritable, Text, LongWritable> reduceDriver;
+	private ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
 
 	@Before
 	public void setUp() throws Exception {
@@ -20,11 +20,11 @@ public class MergeWordsMapperTest {
 
 	@Test
 	public void testMergeWordsReducer() {
-		List<LongWritable> values = new ArrayList<>();
-		values.add(new LongWritable(1));
-		values.add(new LongWritable(2));
+		List<IntWritable> values = new ArrayList<>();
+		values.add(new IntWritable(1));
+		values.add(new IntWritable(2));
 		reduceDriver.withInput(new Text("测试"), values);
-		reduceDriver.withOutput(new Text("测试"), new LongWritable(3));
+		reduceDriver.withOutput(new Text("测试"), new IntWritable(3));
 		reduceDriver.runTest();
 	}
 }

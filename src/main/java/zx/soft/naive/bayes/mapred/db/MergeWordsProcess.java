@@ -5,10 +5,8 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -21,6 +19,7 @@ import zx.soft.naive.bayes.utils.HDFSUtils;
 
 /**
  * 对DbToWordsProcesss输出的多个分词目录进行合并，对词语出现的频数进行累加
+ * 
  * @author frank
  *
  */
@@ -43,11 +42,7 @@ public class MergeWordsProcess extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 
 		Configuration conf = getConf();
-		/**
-		 * 设置Mapper输出压缩
-		 */
-		conf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
-		conf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
+
 		int numReduceTasks = conf.getInt("numReduceTasks", 10);
 
 		Path sourceDataPath = new Path(conf.get("sourceData"));
@@ -65,9 +60,9 @@ public class MergeWordsProcess extends Configured implements Tool {
 		job.setNumReduceTasks(numReduceTasks);
 
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(LongWritable.class);
+		job.setMapOutputValueClass(IntWritable.class);
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(LongWritable.class);
+		job.setOutputValueClass(IntWritable.class);
 
 		/**
 		 * 输入文件目录有两种形式：
@@ -88,12 +83,8 @@ public class MergeWordsProcess extends Configured implements Tool {
 		} else if (inputsType.equals("D")) {
 			FileInputFormat.setInputPaths(job, sourceDataPath + "/*/");
 		}
+
 		FileOutputFormat.setOutputPath(job, dstDataPath);
-		/**
-		 * 设置输出压缩
-		 */
-		FileOutputFormat.setCompressOutput(job, true);
-		FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
 
 		if (!job.waitForCompletion(true)) {
 			System.err.println("ERROR: TxtToHdfsDataProcess failed!");
