@@ -6,7 +6,9 @@ import zx.soft.naive.bayes.mapred.NaiveBayesDistribute;
 import zx.soft.naive.bayes.mapred.core.NaiveBayesForecast;
 import zx.soft.naive.bayes.mapred.core.NavieBayesTraining;
 import zx.soft.naive.bayes.mapred.db.DbToHdfsDataProcess;
+import zx.soft.naive.bayes.mapred.db.DbToWordsProcess;
 import zx.soft.naive.bayes.mapred.db.HdfsToDBProcess;
+import zx.soft.naive.bayes.mapred.db.MergeWordsProcess;
 import zx.soft.naive.bayes.mapred.txt.TxtToHdfsDataProcess;
 import zx.soft.naive.bayes.mapred.txt.VerifyTxtToHdfsDataProcess;
 import zx.soft.naive.bayes.simple.NaiveBayesSimple;
@@ -31,6 +33,8 @@ public class NaiveBayesDriver {
 			pgd.addClass("naiveBayesSimple", NaiveBayesSimple.class, "简单Naive-Bayes实现");
 			pgd.addClass("txtToHdfsDataProcess", TxtToHdfsDataProcess.class, "Txt数据处理，并存储到HDFS中");
 			pgd.addClass("dbToHdfsDataProcess", DbToHdfsDataProcess.class, "DB数据处理，并存储到HDFS中");
+			pgd.addClass("dbToWordsProcess", DbToWordsProcess.class, "将单张数据表进行分词，并存储到HDFS中");
+			pgd.addClass("mergeWordsProcess", MergeWordsProcess.class, "合并单张数据表分词的结果，并存储到HDFS中");
 			pgd.addClass("verifyTxtToHdfsDataProcess", VerifyTxtToHdfsDataProcess.class, "从训练数据中抽取一部分作为验证数据");
 			pgd.addClass("naiveBayesDistribute", NaiveBayesDistribute.class, "分布式Naive-Bayes实现");
 			pgd.addClass("hdfsToDBProcess", HdfsToDBProcess.class, "将Naive-Bayes计算的结果从HDFS中导入到DB中");

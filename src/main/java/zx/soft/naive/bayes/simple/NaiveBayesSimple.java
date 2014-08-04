@@ -107,9 +107,6 @@ public class NaiveBayesSimple {
 	 * <br>
 	 *     当前类别与输入文本的相似度
 	 * </br>
-	 * @param text
-	 * @param cate
-	 * @return
 	 */
 	public double calculatePosterioriProbability(String text, String cate) {
 		List<String> words = analyzerTool.analyzerTextToList(text);
