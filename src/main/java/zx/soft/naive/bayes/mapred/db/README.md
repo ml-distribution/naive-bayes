@@ -26,7 +26,7 @@ hadoop jar naive-bayes-jar-with-dependencies.jar dbToHdfsDataProcess -D tableNam
 ```java
 运行脚本：
 
-hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename -D processData=process-words
+hadoop jar frank-naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename -D processData=process-words
 ```
 
 输出：
@@ -42,7 +42,7 @@ hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=m
 ```java
 运行脚本：
 
-hadoop jar naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData=process-words -D dstData=all-words
+hadoop jar frank-naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData=process-words -D dstData=all-words
 ```
 
 输出：

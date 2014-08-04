@@ -1,8 +1,9 @@
 package zx.soft.naive.bayes.mapred.db;
 
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -46,8 +47,7 @@ public class MergeWordsProcess extends Configured implements Tool {
 		 * 设置Mapper输出压缩
 		 */
 		conf.setBoolean("mapred.compress.map.output", true); // 开起map输出压缩
-		conf.setClass("mapred.map.output.compression.codec", GzipCodec.class,
-				CompressionCodec.class); // 设置压缩算法
+		conf.setClass("mapred.map.output.compression.codec", GzipCodec.class, CompressionCodec.class); // 设置压缩算法
 		int numReduceTasks = conf.getInt("numReduceTasks", 10);
 
 		Path sourceDataPath = new Path(conf.get("sourceData"));
@@ -70,9 +70,24 @@ public class MergeWordsProcess extends Configured implements Tool {
 		job.setOutputValueClass(LongWritable.class);
 
 		/**
-		 * 设置多个路径作为输入文件路径
+		 * 输入文件目录有两种形式：
+		 * 1.只含待处理文件  all-words
+		 * 2.只含待处理子目录，子目录里还有待处理文件  process-words
 		 */
-		FileInputFormat.setInputPaths(job, sourceDataPath+"/*/");
+		FileSystem hdfs = FileSystem.get(conf);
+		FileStatus[] inputs = hdfs.listStatus(sourceDataPath);
+		String inputsType = "F"; //输入目录只含文件
+		for (FileStatus input : inputs) {
+			if (input.isDir()) {
+				inputsType = "D"; //输入目录包含子目录
+				break;
+			}
+		}
+		if (inputsType.equals("F")) {
+			FileInputFormat.setInputPaths(job, sourceDataPath);
+		} else if (inputsType.equals("D")) {
+			FileInputFormat.setInputPaths(job, sourceDataPath + "/*/");
+		}
 		FileOutputFormat.setOutputPath(job, dstDataPath);
 		/**
 		 * 设置输出压缩

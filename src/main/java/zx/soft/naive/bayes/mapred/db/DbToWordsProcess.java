@@ -22,14 +22,14 @@ import zx.soft.naive.bayes.utils.HDFSUtils;
 
 /**
  * 将数据库内单张微博数据表进行分词
- * 
- * 输入：为什么总是受伤啊！！！！[可怜]
+ *
+ * 输入：为什么总是受伤haha啊！！！！[可怜]
  * 输出：
  * 为什么 1
  * 总是 1
  * 受伤 1
  * 可怜 1
- * 
+ *
  * @author frank
  *
  */
@@ -83,12 +83,6 @@ public class DbToWordsProcess extends Configured implements Tool {
 		job.setOutputValueClass(LongWritable.class);
 
 		FileOutputFormat.setOutputPath(job, dstDataPath);
-
-		/**
-		 * 设置输出压缩
-		 */
-		//		FileOutputFormat.setCompressOutput(job, true);
-		//		FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
 
 		job.setInputFormatClass(DBInputFormat.class);
 		// 是否可设置多个数据表？
