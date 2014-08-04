@@ -8,6 +8,8 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class DbToWordsReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 
+	private static final int MIN_COUNT = 100;
+
 	private static int sum = 0;
 
 	@Override
@@ -19,7 +21,10 @@ public class DbToWordsReducer extends Reducer<Text, IntWritable, Text, IntWritab
 		for (IntWritable value : values) {
 			sum += value.get();
 		}
-		context.write(word, new IntWritable(sum));
+		// 输出频次大于一定值的词语
+		if (sum >= MIN_COUNT) {
+			context.write(word, new IntWritable(sum));
+		}
 	}
 
 }
