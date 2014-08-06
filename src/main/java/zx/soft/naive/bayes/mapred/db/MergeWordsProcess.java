@@ -19,7 +19,7 @@ import zx.soft.naive.bayes.utils.HDFSUtils;
 
 /**
  * 对DbToWordsProcesss输出的多个分词目录进行合并，对词语出现的频数进行累加
- * 
+ *
  * @author frank
  *
  */
@@ -43,7 +43,7 @@ public class MergeWordsProcess extends Configured implements Tool {
 
 		Configuration conf = getConf();
 
-		int numReduceTasks = conf.getInt("numReduceTasks", 10);
+		int numReduceTasks = conf.getInt("numReduceTasks", 1);
 
 		Path sourceDataPath = new Path(conf.get("sourceData"));
 		Path dstDataPath = new Path(conf.get("dstData"));
