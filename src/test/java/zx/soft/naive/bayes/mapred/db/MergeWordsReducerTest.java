@@ -9,7 +9,7 @@ import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MergeWordsMapperTest {
+public class MergeWordsReducerTest {
 	private ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
 
 	@Before

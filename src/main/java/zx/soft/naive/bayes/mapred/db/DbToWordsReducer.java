@@ -8,7 +8,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class DbToWordsReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
 
-	private static final int MIN_COUNT = 100;
+	private static final int MIN_COUNT = 1;
 
 	private static int sum = 0;
 

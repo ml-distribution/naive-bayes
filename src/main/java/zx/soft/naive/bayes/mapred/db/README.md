@@ -26,7 +26,7 @@ hadoop jar naive-bayes-jar-with-dependencies.jar dbToHdfsDataProcess -D tableNam
 ```java
 运行脚本：
 
-hadoop jar frank-naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename -D processData=process-words
+hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename  -D processData=process-words
 ```
 
 输出：
@@ -42,7 +42,7 @@ hadoop jar frank-naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D table
 ```java
 运行脚本：
 
-hadoop jar frank-naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData=process-words -D dstData=all-words
+hadoop jar naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData=process-words -D dstData=all-words
 ```
 
 输出：
@@ -55,4 +55,22 @@ hadoop jar frank-naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sour
 不在此列        128
 
 
+将广告相关微博语料进行分词：
+======
 
+```java
+运行脚本：
+
+hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename  -D processData=advertisement-words
+```
+
+输出：
+一键	119
+下载	119
+信息流	119
+分享	404435
+升级	119
+听歌	119
+图片	404435
+地址	119
+好友	238

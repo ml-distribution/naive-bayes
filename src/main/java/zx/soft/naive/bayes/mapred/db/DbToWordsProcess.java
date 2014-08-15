@@ -50,7 +50,7 @@ public class DbToWordsProcess extends Configured implements Tool {
 
 		Configuration conf = getConf();
 
-		int numReduceTasks = conf.getInt("numReduceTasks", 10);
+		int numReduceTasks = conf.getInt("numReduceTasks", 1);
 
 		// 由于数据表很多，而每次只能处理一个数据表，所以需要批量处理多个数据表
 		String tablename = conf.get("tableName");
