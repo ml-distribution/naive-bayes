@@ -69,7 +69,6 @@
 			</exclusions>
 		</dependency>
 
-
 		<dependency>
 			<groupId>cc.pp.study</groupId>
 			<artifactId>analyzer-ik</artifactId>
@@ -149,6 +148,11 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
+		<dependency>
+			<groupId>zx.soft</groupId>
+			<artifactId>negative-sentiment</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -224,6 +228,12 @@
 	</build>
 
 	<repositories>
+		<!-- 中新仓库 -->
+		<repository>
+			<id>zxsoft-public</id>
+			<name>Nexus Release Repository</name>
+			<url>http://192.168.3.23:18081/nexus/content/groups/public/</url>
+		</repository>		
 		<!-- Restlet 仓库 -->
 		<repository>
 			<id>maven-restlet</id>

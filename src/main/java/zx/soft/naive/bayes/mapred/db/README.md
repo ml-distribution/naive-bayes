@@ -61,7 +61,11 @@ hadoop jar naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData
 ```java
 运行脚本：
 
+分词：
 hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=mysql-tablename  -D processData=advertisement-words
+
+合并：
+hadoop jar naive-bayes-jar-with-dependencies.jar mergeWordsProcess -D sourceData=advertisement-words -D dstData=all-advertisement-words
 ```
 
 输出：
@@ -74,3 +78,7 @@ hadoop jar naive-bayes-jar-with-dependencies.jar dbToWordsProcess -D tableName=m
 图片	404435
 地址	119
 好友	238
+
+
+进一步提取处广告词语：
+hadoop jar naive-bayes-jar-with-dependencies-advertisement-filter-using-ad-dict.jar dbToWordsProcess -D tableName=sina_user_weibos_1386595689  -D processData=advertisement-words-using-ad-dict/sina_user_weibos_1386595689
