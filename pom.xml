@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>cc.pp.study</groupId>
 			<artifactId>analyzer-mmseg4j</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.hadoop</groupId>
@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>cc.pp.study</groupId>
 			<artifactId>analyzer-ik</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.hadoop</groupId>
