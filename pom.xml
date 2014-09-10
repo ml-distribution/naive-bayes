@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>cc.pp.study</groupId>
 			<artifactId>analyzer-ik</artifactId>
-			 <version>1.0.0</version>
+			<version>1.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.hadoop</groupId>
@@ -203,6 +203,12 @@
 	</build>
 
 	<repositories>
+		<!-- 中新仓库 -->
+		<repository>
+			<id>zxsoft-public</id>
+			<name>Nexus Release Repository</name>
+			<url>http://192.168.3.23:18081/nexus/content/groups/public/</url>
+		</repository>
 		<!-- Restlet 仓库 -->
 		<repository>
 			<id>maven-restlet</id>
